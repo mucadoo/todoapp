@@ -1,23 +1,68 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../api/queries';
-import { RegisterCredentials } from '../types/auth';
 
 export const RegisterPage: React.FC = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterCredentials & { confirmPassword: string }>();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  
   const navigate = useNavigate();
   const { register: registerUser, isRegistering } = useAuth();
 
-  const password = watch('password');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const onSubmit = async (data: RegisterCredentials & { confirmPassword: string }) => {
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    }
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    if (formData.confirmPassword !== formData.password) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
     try {
-      await registerUser(data);
+      await registerUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
-      // TODO: Display error message to user
+      setErrors({ general: 'Registration failed. Email might already be in use.' });
     }
   };
 
@@ -25,49 +70,61 @@ export const RegisterPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {errors.general && (
+          <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 text-sm rounded">
+            {errors.general}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
             <input
               id="name"
+              name="name"
               type="text"
-              {...register('name', { required: 'Name is required' })}
+              value={formData.name}
+              onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
               id="email"
+              name="email"
               type="email"
-              {...register('email', { required: 'Email is required' })}
+              value={formData.email}
+              onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
               id="password"
+              name="password"
               type="password"
-              {...register('password', { required: 'Password is required', minLength: { value: 8, message: 'Password must be at least 8 characters' } })}
+              value={formData.password}
+              onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
           </div>
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <input
               id="confirmPassword"
+              name="confirmPassword"
               type="password"
-              {...register('confirmPassword', {
-                required: 'Please confirm your password',
-                validate: (value) => value === password || 'Passwords do not match',
-              })}
+              value={formData.confirmPassword}
+              onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
-            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
           </div>
           <button
             type="submit"
