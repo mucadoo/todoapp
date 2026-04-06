@@ -1,0 +1,132 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Python linting tools
+        run: pip install ruff black
+        
+      - name: Lint Backend (Ruff)
+        run: ruff check backend/apps backend/config
+        
+      - name: Check Formatting (Black)
+        run: black --check backend/apps backend/config
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+        
+      - name: Lint Frontend (ESLint)
+        working-directory: ./frontend
+        run: npm run lint
+
+  test-backend:
+    runs-on: ubuntu-latest
+    needs: lint
+    services:
+      db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: todoapp_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: pip install -r requirements.txt pytest pytest-django model-bakery coverage
+        
+      - name: Run Backend Tests
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://test_user:test_password@localhost:5432/todoapp_test
+          SECRET_KEY: test-secret-key
+          DEBUG: True
+        run: coverage run -m pytest
+        
+      - name: Check Coverage
+        working-directory: ./backend
+        run: |
+          coverage report --fail-under=80
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    needs: [lint, test-backend]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Compose
+        run: sudo apt-get update && sudo apt-get install docker-compose -y
+
+      - name: Run E2E Tests in Docker
+        run: |
+          docker-compose up -d db backend frontend
+          # Wait for services to be ready
+          sleep 30
+          # Run Selenium tests (assumes pytest is installed on host or in a separate test container)
+          # For simplicity in this demo, we use a python step to run the tests
+          pip install selenium webdriver-manager pytest
+          pytest frontend/tests/test_e2e.py
+          docker-compose down
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/todoapp-backend:latest
+          
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/todoapp-frontend:latest
