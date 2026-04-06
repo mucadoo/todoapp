@@ -109,19 +109,41 @@ The GitHub Actions pipeline (`.github/workflows/ci.yml`) triggers on every push 
 2. **Backend Tests**: Runs pytest with coverage (must be > 80%).
 3. **Frontend Tests**: Executes Selenium E2E tests in a Docker Compose environment.
 4. **Build & Push**: Builds Docker images and pushes to GHCR (only on `push` to `main`).
+5. **Deploy**: Automatically deploys the latest version to AWS EC2 on push to `main`.
 
-## 8. Design Decisions
+## 8. Deploy (AWS EC2)
+
+### Prerequisites
+- AWS EC2 instance (t2.micro is sufficient) running Ubuntu/Amazon Linux.
+- Security Group rules: Allow SSH (22), HTTP (80), and HTTPS (443).
+- Docker and Docker Compose (V2) installed on the server.
+- The server must be logged in to GHCR to pull private images (if applicable):
+  ```bash
+  echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+  ```
+
+### GitHub Secrets to Configure
+Set these secrets in your GitHub repository (Settings > Secrets and variables > Actions):
+- `EC2_HOST`: The public IP or DNS of your EC2 instance.
+- `EC2_USER`: The SSH username (e.g., `ubuntu` or `ec2-user`).
+- `EC2_SSH_KEY`: The content of your private SSH key (`.pem` file).
+- `POSTGRES_PASSWORD`: Production password for the database.
+- `SECRET_KEY`: Production Django secret key.
+
+### One-time Server Setup
+```bash
+# Update and install Docker
+sudo apt-get update
+sudo apt-get install ca-certificates cursor-utils curl gnupg
+# ... follow official docker installation steps for your distro ...
+# Add your user to the docker group to run without sudo
+sudo usermod -aG docker $USER && newgrp docker
+```
+
+## 9. Design Decisions
 
 - **JWT Auth**: Used for stateless authentication, with `SimpleJWT` providing access and refresh token logic.
 - **UUID PKs**: Used for all models (User, Category, Task) for security and better scalability in distributed systems.
 - **React Query**: Chosen for powerful server state management, caching, and optimistic updates for toggling task completion.
 - **Page Object Model (POM)**: Applied in Selenium tests for better maintainability and readability.
 - **Multi-stage Docker Builds**: Optimized for performance and security in production images.
-
-## 9. Deployment (Optional)
-
-To deploy to AWS (EC2/ECS) or Azure:
-1. Configure secrets in GitHub Actions.
-2. Set up a reverse proxy (like Nginx) for SSL termination.
-3. Update `ALLOWED_HOSTS` and `CORS_ALLOWED_ORIGINS` to match your domain.
-4. Pull the latest images from GHCR and restart containers using Docker Compose.

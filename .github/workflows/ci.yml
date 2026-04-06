@@ -97,8 +97,7 @@ jobs:
           docker-compose up -d db backend frontend
           # Wait for services to be ready
           sleep 30
-          # Run Selenium tests (assumes pytest is installed on host or in a separate test container)
-          # For simplicity in this demo, we use a python step to run the tests
+          # Run Selenium tests
           pip install selenium webdriver-manager pytest
           pytest frontend/tests/test_e2e.py
           docker-compose down
@@ -130,3 +129,34 @@ jobs:
           context: ./frontend
           push: true
           tags: ghcr.io/${{ github.repository }}/todoapp-frontend:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create .env for deployment
+        run: |
+          echo "POSTGRES_DB=todoapp_prod" >> .env
+          echo "POSTGRES_USER=todo_user_prod" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "ALLOWED_HOSTS=${{ secrets.EC2_HOST }}" >> .env
+          echo "CORS_ALLOWED_ORIGINS=http://${{ secrets.EC2_HOST }}" >> .env
+
+      - name: Copy files to server
+        run: |
+          scp -i ~/.ssh/id_rsa deploy.sh docker-compose.prod.yml .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/
+
+      - name: Execute remote deployment script
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'chmod +x deploy.sh && ./deploy.sh'
