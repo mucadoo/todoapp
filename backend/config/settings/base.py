@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from decouple import config
 import dj_database_url
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
@@ -30,7 +31,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'users',
-    # 'tasks',
+    'tasks',
     # 'external_api',
 ]
 
@@ -121,7 +122,6 @@ REST_FRAMEWORK = {
 }
 
 # JWT Configuration
-from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -129,4 +129,4 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='').split(',')
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',')
