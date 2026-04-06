@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     # Local apps
     'users',
     'tasks',
-    # 'external_api',
+    'external_api',
 ]
 
 AUTH_USER_MODEL = 'users.User'
