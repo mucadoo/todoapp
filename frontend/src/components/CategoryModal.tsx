@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Category } from '../types/tasks';
-import { X, Trash2, Plus, Edit2, Users } from 'lucide-react';
+import { X, Trash2, Plus, Edit2 } from 'lucide-react';
 import { useCategories, useAuth } from '../api/queries';
 import { clsx } from 'clsx';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -20,12 +20,9 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<Partial<Category>>();
 
-  const { ownedCategories, sharedCategories } = useMemo(() => {
-    if (!categories?.results) return { ownedCategories: [], sharedCategories: [] };
-    return {
-      ownedCategories: categories.results.filter(c => !c.is_shared),
-      sharedCategories: categories.results.filter(c => c.is_shared)
-    };
+  const ownedCategories = useMemo(() => {
+    if (!categories?.results) return [];
+    return categories.results.filter(c => !c.is_shared);
   }, [categories]);
 
   useEffect(() => {
@@ -37,7 +34,6 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     }
   }, [editingCategory, setValue, reset]);
 
-  // Reset state when drawer closes
   useEffect(() => {
     if (!isOpen) {
       setEditingCategory(null);
@@ -60,14 +56,21 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     }
   };
 
-  const handleEditClick = (category: Category) => {
-    setEditingCategory(category);
+  const handleCategoryClick = (category: Category) => {
+    if (editingCategory?.id === category.id) {
+      setEditingCategory(null);
+    } else {
+      setEditingCategory(category);
+    }
   };
 
   const handleDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
         await deleteCategory(categoryToDelete);
+        if (editingCategory?.id === categoryToDelete) {
+          setEditingCategory(null);
+        }
         setCategoryToDelete(null);
       } catch (error) {
         console.error('Failed to delete category:', error);
@@ -80,46 +83,31 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     reset({ name: '', color: '#6366f1' });
   };
 
-  const renderCategoryRow = (c: Category, isOwner: boolean) => (
+  const renderCategoryRow = (c: Category) => (
     <div 
       key={c.id} 
-      onClick={() => isOwner && handleEditClick(c)}
+      onClick={() => handleCategoryClick(c)}
       className={clsx(
-        "flex items-center justify-between p-3 border rounded-lg transition-colors group",
-        isOwner && "cursor-pointer",
+        "flex items-center justify-between p-3 border rounded-lg transition-colors group cursor-pointer",
         editingCategory?.id === c.id 
           ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20" 
-          : (isOwner ? "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50" : "border-gray-100 dark:border-gray-800 opacity-80")
+          : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
       )}
     >
       <div className="flex items-center space-x-3 overflow-hidden">
         <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
         <div className="flex flex-col min-w-0">
           <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
-          {!isOwner && c.owner && (
-            <span className="text-[10px] text-gray-400 truncate">{c.owner.name || c.owner.username}</span>
-          )}
         </div>
       </div>
       <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        {isOwner && (
-          <>
-            <button
-              onClick={(e) => { e.stopPropagation(); handleEditClick(c); }}
-              className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-indigo-400 transition-colors rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-              title={t('common.edit')}
-            >
-              <Edit2 size={18} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
-              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
-              title={t('common.edit')}
-            >
-              <Trash2 size={18} />
-            </button>
-          </>
-        )}
+        <button
+          onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
+          className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+          title={t('common.delete')}
+        >
+          <Trash2 size={18} />
+        </button>
       </div>
     </div>
   );
@@ -132,7 +120,6 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
       >
-        {/* Backdrop */}
         <div 
           className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity" 
           onClick={onClose} 
@@ -146,7 +133,6 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
             )}
           >
             <div className="flex h-full flex-col bg-white dark:bg-gray-800 shadow-2xl">
-              {/* Header */}
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h2>
                 <button 
@@ -158,7 +144,6 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                {/* Form Section */}
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     {editingCategory ? <Edit2 size={16} /> : <Plus size={16} />}
@@ -205,36 +190,19 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
                   </form>
                 </section>
 
-                {/* Category List */}
-                <div className="space-y-6">
-                  {/* Owned Categories */}
-                  <section className="space-y-4">
-                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      {t('categories.title')}
-                    </h3>
-                    <div className="space-y-2">
-                      {ownedCategories.map(c => renderCategoryRow(c, true))}
-                      {ownedCategories.length === 0 && (
-                        <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
-                          <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-
-                  {/* Shared Categories */}
-                  {sharedCategories.length > 0 && (
-                    <section className="space-y-4">
-                      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <Users size={12} />
-                        {t('categories.shared')}
-                      </h3>
-                      <div className="space-y-2">
-                        {sharedCategories.map(c => renderCategoryRow(c, false))}
+                <section className="space-y-4">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {t('categories.title')}
+                  </h3>
+                  <div className="space-y-2">
+                    {ownedCategories.map(c => renderCategoryRow(c))}
+                    {ownedCategories.length === 0 && (
+                      <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+                        <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
                       </div>
-                    </section>
-                  )}
-                </div>
+                    )}
+                  </div>
+                </section>
               </div>
             </div>
           </div>
