@@ -2,8 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Category } from '../types/tasks';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Plus } from 'lucide-react';
 import { useCategories } from '../api/queries';
+import { clsx } from 'clsx';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -24,68 +25,110 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 transition-all">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col transition-colors duration-200">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center flex-shrink-0">
-          <h2 className="text-xl font-bold dark:text-white">{t('categories.title')}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
-            <X size={24} />
-          </button>
-        </div>
-        <div className="p-6 space-y-6 overflow-y-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('categories.name')}</label>
-                <input
-                  type="text"
-                  {...register('name', { required: true })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-colors"
-                  placeholder="Work, Personal..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('categories.color')}</label>
-                <input
-                  type="color"
-                  {...register('color')}
-                  defaultValue="#000000"
-                  className="mt-1 h-9 w-12 border border-gray-300 dark:border-gray-600 rounded-md p-1 block focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+    <div 
+      className={clsx(
+        "fixed inset-0 z-50 overflow-hidden transition-opacity duration-300",
+        isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      )}
+    >
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity" 
+        onClick={onClose} 
+      />
+
+      <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div 
+          className={clsx(
+            "w-screen max-w-md transform transition-transform duration-300 ease-in-out sm:duration-500",
+            isOpen ? "translate-x-0" : "translate-x-full"
+          )}
+        >
+          <div className="flex h-full flex-col bg-white dark:bg-gray-800 shadow-2xl">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h2>
+              <button 
+                onClick={onClose} 
+                className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
               >
-                {t('common.create')}
+                <X size={24} />
               </button>
             </div>
-            {errors.name && <p className="mt-1 text-sm text-red-600">Name is required</p>}
-          </form>
 
-          <div className="max-h-64 overflow-y-auto space-y-2">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('categories.title')}</h3>
-            {categories?.results.map((c) => (
-              <div key={c.id} className="flex items-center justify-between p-2 border border-gray-200 dark:border-gray-700 rounded-md">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: c.color }} />
-                  <span className="text-sm font-medium dark:text-gray-200">{c.name}</span>
+            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+              {/* Create Category Form */}
+              <section className="space-y-4">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Plus size={16} />
+                  {t('categories.manageCategories')}
+                </h3>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('categories.name')}</label>
+                      <input
+                        type="text"
+                        {...register('name', { required: true })}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-colors"
+                        placeholder="Work, Personal..."
+                      />
+                      {errors.name && <p className="mt-1 text-xs text-red-600">Name is required</p>}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('categories.color')}</label>
+                      <div className="mt-1 flex items-center gap-3">
+                        <input
+                          type="color"
+                          {...register('color')}
+                          defaultValue="#6366f1"
+                          className="h-10 w-20 border border-gray-300 dark:border-gray-600 rounded-md p-1 block cursor-pointer bg-white dark:bg-gray-700 transition-colors"
+                        />
+                        <button
+                          type="submit"
+                          className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          {t('common.create')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </section>
+
+              {/* Category List */}
+              <section className="space-y-4">
+                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  {t('categories.title')}
+                </h3>
+                <div className="space-y-2">
+                  {categories?.results.map((c) => (
+                    <div 
+                      key={c.id} 
+                      className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: c.color }} />
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-200">{c.name}</span>
+                      </div>
+                      <button
+                        onClick={() => deleteCategory(c.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+                        title={t('common.delete')}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  ))}
+                  {categories?.results.length === 0 && (
+                    <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+                      <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={() => deleteCategory(c.id)}
-                  className="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
-                  title={t('common.delete')}
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            ))}
-            {categories?.results.length === 0 && (
-              <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No categories yet.</p>
-            )}
+              </section>
+            </div>
           </div>
         </div>
       </div>
