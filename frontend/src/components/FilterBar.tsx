@@ -59,7 +59,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4 transition-colors duration-200">
       <div className="flex items-center space-x-2">
-        <div className="relative flex-grow md:flex-grow-0 md:w-64"> {/* Adjusted width here */}
+        <div className="relative flex-grow md:flex-grow-0 md:w-64">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
           <input
             type="text"
@@ -123,9 +123,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
           <select
             className="text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1 md:w-48 transition-colors"
             onChange={handleOrderingChange}
-            value={filters.ordering || ''}
+            value={filters.ordering || '-created_at'}
           >
-            <option value="">{t('common.ordering')}</option>
             <option value="-created_at">{t('tasks.sortBy.createdAtDesc')}</option>
             <option value="created_at">{t('tasks.sortBy.createdAtAsc')}</option>
             <option value="due_date">{t('tasks.sortBy.dueDateAsc')}</option>
