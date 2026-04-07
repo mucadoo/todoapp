@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Task } from '../types/tasks';
-import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, Circle, Share2, Trash2, Edit2, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useTaskShare, useAuth } from '../api/queries';
+import { useAuth } from '../api/queries';
 import { formatDate, isTaskOverdue } from '../utils/dateUtils';
 import { ShareTaskModal } from './ShareTaskModal';
 
@@ -18,18 +18,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
   const { t } = useTranslation();
   const { user: currentUser } = useAuth();
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const { unshareTask, isUnsharing } = useTaskShare();
 
   const isOwner = currentUser?.id === task.owner.id;
   const isOverdue = isTaskOverdue(task.due_date, task.has_time, task.is_completed);
-
-  const handleUnshare = async (email: string) => {
-    try {
-      await unshareTask({ id: task.id, email });
-    } catch (error) {
-      console.error('Unsharing failed:', error);
-    }
-  };
 
   const priorityColors = {
     low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
@@ -42,12 +33,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
       "bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 relative",
       task.is_completed ? "opacity-75 border-gray-200 dark:border-gray-700" : (isOverdue ? "border-red-300 dark:border-red-900/50" : "border-gray-200 dark:border-gray-700")
     )}>
-      {!isOwner && (
-        <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider">
-          {t('tasks.shared')}
-        </div>
-      )}
-
       {isOverdue && (
         <div className="absolute -top-2 left-4 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold rounded-md flex items-center space-x-1 border border-red-200 dark:border-red-800/50 uppercase tracking-wide">
           <AlertCircle size={10} />
@@ -56,27 +41,29 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
       )}
 
       <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3">
+        <div className="flex items-start space-x-3 w-full min-w-0">
           <button
-            onClick={() => onToggle(task.id)}
+            onClick={() => isOwner && onToggle(task.id)}
+            disabled={!isOwner}
             className={clsx(
-              "mt-1 focus:outline-none",
+              "mt-1 focus:outline-none shrink-0",
+              !isOwner && "cursor-default",
               task.is_completed ? "text-green-500" : (isOverdue ? "text-red-400" : "text-gray-400")
             )}
           >
             {task.is_completed ? <CheckCircle size={20} /> : <Circle size={20} />}
           </button>
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className={clsx(
-              "text-lg font-semibold dark:text-white",
+              "text-lg font-semibold dark:text-white truncate",
               task.is_completed && "line-through text-gray-500 dark:text-gray-400"
             )}>
               {task.title}
             </h3>
             {task.description && (
-              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{task.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">{task.description}</p>
             )}
-            <div className="flex items-center space-x-2 mt-3 flex-wrap">
+            <div className="flex items-center space-x-2 mt-3 flex-wrap gap-y-1">
               {task.category && (
                 <span
                   className="px-2 py-0.5 rounded text-xs font-medium"
@@ -97,51 +84,30 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                 </span>
               )}
             </div>
-            
-            {task.shared_with.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 mt-3">
-                {task.shared_with.map((u) => (
-                  <div 
-                    key={u.id} 
-                    className="group flex items-center bg-gray-100 dark:bg-gray-700 rounded-full pl-1 pr-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-white mr-1">
-                      {u.name ? u.name[0] : (u.username ? u.username[0] : u.email[0])}
-                    </div>
-                    <span className="max-w-[80px] truncate" title={u.email}>{u.name || u.username}</span>
-                    {isOwner && (
-                      <button 
-                        onClick={() => handleUnshare(u.email)}
-                        disabled={isUnsharing}
-                        className="ml-1 text-gray-400 hover:text-red-500 transition-colors"
-                      >
-                        <XCircle size={12} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
-        <div className="flex space-x-1">
-          {isOwner && (
-            <button 
-              onClick={() => setIsShareModalOpen(true)} 
-              className={clsx(
-                "p-1 transition-colors text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-              )}
-              title={t('tasks.share')}
-            >
-              <Share2 size={18} />
-            </button>
+        <div className="flex items-center space-x-1 shrink-0 ml-2">
+          {isOwner ? (
+            <>
+              <button 
+                onClick={() => setIsShareModalOpen(true)} 
+                className="p-1 transition-colors text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                title={t('tasks.share')}
+              >
+                <Share2 size={18} />
+              </button>
+              <button onClick={() => onEdit(task)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400" title={t('common.edit')}>
+                <Edit2 size={18} />
+              </button>
+              <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400" title={t('common.delete')}>
+                <Trash2 size={18} />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center space-x-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded text-[10px] font-bold uppercase tracking-wider">
+              <span>{task.owner.name || task.owner.username}</span>
+            </div>
           )}
-          <button onClick={() => onEdit(task)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400" title={t('common.edit')}>
-            <Edit2 size={18} />
-          </button>
-          <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400" title={t('common.delete')}>
-            <Trash2 size={18} />
-          </button>
         </div>
       </div>
 
