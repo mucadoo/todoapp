@@ -68,6 +68,8 @@
     "taskTitle": "Título da Tarefa",
     "description": "Descrição",
     "dueDate": "Data de Entrega",
+    "addTime": "Adicionar Hora",
+    "removeTime": "Remover Hora",
     "category": "Categoria",
     "priority": "Prioridade",
     "status": "Status",

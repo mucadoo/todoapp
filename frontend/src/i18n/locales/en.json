@@ -68,6 +68,8 @@
     "taskTitle": "Task Title",
     "description": "Description",
     "dueDate": "Due Date",
+    "addTime": "Add Time",
+    "removeTime": "Remove Time",
     "category": "Category",
     "priority": "Priority",
     "status": "Status",
