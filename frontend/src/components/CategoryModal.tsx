@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Category } from '../types/tasks';
-import { X, Trash2, Plus, ArrowLeft, Check, Palette } from 'lucide-react';
+import { X, Trash2, Plus, ArrowLeft, Check } from 'lucide-react';
 import { useCategories } from '../api/queries';
 import { clsx } from 'clsx';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -37,7 +37,6 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     }
   }, [editingCategory, setValue, reset]);
 
-  // Reset state when drawer closes
   useEffect(() => {
     if (!isOpen) {
       setViewMode('list');
@@ -113,59 +112,59 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
               isOpen ? "translate-x-0" : "translate-x-full"
             )}
           >
-            <div className="flex h-full flex-col bg-white dark:bg-gray-800 shadow-2xl">
+            <div className="flex h-full flex-col bg-white dark:bg-gray-800 shadow-xl transition-colors duration-200">
               {/* Header */}
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center flex-shrink-0 bg-gray-50/50 dark:bg-gray-800/50">
                 <div className="flex items-center space-x-2">
                   {viewMode !== 'list' && (
                     <button 
                       onClick={goBack}
-                      className="p-1.5 -ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="p-1 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
                     >
                       <ArrowLeft size={20} />
                     </button>
                   )}
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl font-bold dark:text-white">
                     {viewMode === 'list' ? t('categories.title') : (viewMode === 'edit' ? t('categories.editCategory') : t('categories.newCategory'))}
                   </h2>
                 </div>
                 <button 
                   onClick={onClose} 
-                  className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+                  className="p-1 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
                 >
                   <X size={24} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto flex flex-col">
                 {viewMode === 'list' ? (
                   <div className="p-6 space-y-6">
                     <button
                       onClick={handleCreateClick}
-                      className="w-full flex items-center justify-center space-x-2 py-3 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-600 dark:text-gray-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-all group"
+                      className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 shadow-sm transition-all active:scale-[0.98]"
                     >
-                      <Plus size={20} className="group-hover:scale-110 transition-transform" />
-                      <span className="font-semibold">{t('categories.newCategory')}</span>
+                      <Plus size={18} />
+                      <span>{t('categories.newCategory')}</span>
                     </button>
 
-                    <div className="space-y-3">
-                      <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">
+                    <div className="space-y-2">
+                      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                         {t('common.all')}
                       </h3>
                       {ownedCategories.map((c) => (
                         <div 
                           key={c.id} 
                           onClick={() => handleEditClick(c)}
-                          className="group flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-indigo-500/50 hover:bg-white dark:hover:bg-gray-700 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                          className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group"
                         >
-                          <div className="flex items-center space-x-4 overflow-hidden">
-                            <div className="w-5 h-5 rounded-lg shadow-sm shrink-0 border-2 border-white dark:border-gray-600" style={{ backgroundColor: c.color }} />
-                            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{c.name}</span>
+                          <div className="flex items-center space-x-3 overflow-hidden">
+                            <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
                           </div>
                           <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
-                              className="p-2 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
                               title={t('common.delete')}
                             >
                               <Trash2 size={18} />
@@ -174,66 +173,62 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
                         </div>
                       ))}
                       {ownedCategories.length === 0 && (
-                        <div className="text-center py-16 px-4">
-                          <div className="bg-gray-100 dark:bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Palette size={32} className="text-gray-400" />
-                          </div>
-                          <p className="text-gray-500 dark:text-gray-400 font-medium">No categories yet.</p>
-                          <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Create one to organize your tasks!</p>
+                        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">No categories yet.</p>
                         </div>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="p-6 h-full flex flex-col">
-                    <div className="flex-1 space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">
+                  <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5 flex flex-col flex-1">
+                    <div className="flex-1 space-y-5">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                           {t('categories.name')}
                         </label>
                         <input
                           autoFocus
                           type="text"
                           {...register('name', { required: true })}
-                          className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all font-medium"
-                          placeholder="e.g. Work, Shopping, Gym..."
+                          className={clsx(
+                            "block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-base bg-white dark:bg-gray-700 dark:text-white",
+                            errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                          )}
+                          placeholder="Work, Personal..."
                         />
-                        {errors.name && <p className="text-xs text-red-500 ml-1">Name is required</p>}
+                        {errors.name && <p className="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400">Name is required</p>}
                       </div>
 
-                      <div className="space-y-3">
-                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                           {t('categories.color')}
                         </label>
-                        <div className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl">
+                        <div className="flex items-center space-x-3">
                           <input
                             type="color"
                             {...register('color')}
-                            className="h-12 w-12 rounded-lg border-0 p-0 bg-transparent cursor-pointer overflow-hidden"
+                            className="h-10 w-20 border border-gray-300 dark:border-gray-600 rounded-lg p-1 block cursor-pointer bg-white dark:bg-gray-700 transition-colors"
                           />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white uppercase">Hex Code</p>
-                            <code className="text-xs text-gray-500 dark:text-gray-400">
-                              {register('color').value || '#6366f1'}
-                            </code>
-                          </div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 font-mono uppercase">
+                            {editingCategory?.color || '#6366f1'}
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-6 border-t border-gray-100 dark:border-gray-700 mt-auto flex space-x-3">
+                    <div className="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-gray-100 dark:border-gray-700 mt-auto">
                       <button
                         type="button"
                         onClick={goBack}
-                        className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        className="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                       >
                         {t('common.cancel')}
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all"
+                        className="flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 shadow-sm shadow-indigo-200 dark:shadow-none transition-all active:scale-[0.98]"
                       >
-                        <Check size={20} />
+                        <Check size={18} />
                         <span>{viewMode === 'edit' ? t('common.save') : t('common.create')}</span>
                       </button>
                     </div>
