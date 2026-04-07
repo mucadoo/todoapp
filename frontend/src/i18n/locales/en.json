@@ -29,7 +29,7 @@
     "fullName": "Full Name",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
-    "invalidCredentials": "Invalid email or password",
+    "invalidCredentials": "Invalid email/username or password",
     "registrationFailed": "Registration failed. Email might already be in use.",
     "emailRequired": "Email is required",
     "passwordRequired": "Password is required",

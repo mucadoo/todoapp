@@ -27,6 +27,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class LoginSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Use our model's USERNAME_FIELD
+        self.fields[self.username_field] = serializers.CharField(required=False)
+        self.fields['username'] = serializers.CharField(required=False)
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -35,7 +41,8 @@ class LoginSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-        login_identifier = attrs.get('email') or attrs.get('username')
+        # Determine if we're logging in with email or username
+        login_identifier = attrs.get(self.username_field) or attrs.get('username')
         password = attrs.get('password')
 
         if not login_identifier or not password:
@@ -51,8 +58,13 @@ class LoginSerializer(TokenObtainPairSerializer):
             
             # SimpleJWT uses self.user to generate tokens
             self.user = user
-            data = super().validate(attrs)
-            return data
+            
+            refresh = self.get_token(self.user)
+            
+            return {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
         
         raise serializers.ValidationError("Incorrect authentication credentials")
 

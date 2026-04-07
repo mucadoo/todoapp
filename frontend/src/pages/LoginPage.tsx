@@ -28,12 +28,9 @@ export const LoginPage: React.FC = () => {
 
   const validate = () => {
     const newErrors: { loginIdentifier?: string; password?: string } = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!loginIdentifier) {
       newErrors.loginIdentifier = t('auth.emailOrUsernameRequired');
-    } else if (!emailRegex.test(loginIdentifier) && loginIdentifier.length < 3) { // Assuming username min length is 3
-      newErrors.loginIdentifier = t('auth.invalidEmailOrUsername');
     }
 
     if (!password) {

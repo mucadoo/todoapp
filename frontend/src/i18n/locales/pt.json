@@ -29,7 +29,7 @@
     "fullName": "Nome Completo",
     "noAccount": "Não tem uma conta?",
     "hasAccount": "Já tem uma conta?",
-    "invalidCredentials": "E-mail ou senha inválidos",
+    "invalidCredentials": "E-mail/usuário ou senha inválidos",
     "registrationFailed": "Falha no cadastro. O e-mail já pode estar em uso.",
     "emailRequired": "E-mail é obrigatório",
     "passwordRequired": "Senha é obrigatória",
