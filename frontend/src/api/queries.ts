@@ -4,6 +4,7 @@ import { authApi } from './auth';
 import { tasksApi } from './tasks';
 import { TaskFilters, Task, Category } from '../types/tasks';
 import { useToast } from '../components/Toast';
+import { User } from '../types/auth';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -35,6 +36,12 @@ export const useAuth = () => {
     },
   });
 
+  const searchUsersQuery = (searchQuery: string) => useQuery<User[], Error>({
+    queryKey: ['users', searchQuery],
+    queryFn: () => authApi.searchUsers(searchQuery),
+    enabled: !!searchQuery,
+  });
+
   return {
     user,
     isLoading,
@@ -44,6 +51,7 @@ export const useAuth = () => {
     logout: logoutMutation.mutateAsync,
     isLoggingIn: loginMutation.isPending,
     isRegistering: registerMutation.isPending,
+    searchUsersQuery,
   };
 };
 

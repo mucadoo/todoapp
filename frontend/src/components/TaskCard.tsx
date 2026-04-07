@@ -5,6 +5,7 @@ import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle } from 'lucide-reac
 import { clsx } from 'clsx';
 import { useTaskShare, useAuth } from '../api/queries';
 import { formatDate } from '../utils/dateUtils';
+import { ShareTaskModal } from './ShareTaskModal';
 
 interface TaskCardProps {
   task: Task;
@@ -16,22 +17,10 @@ interface TaskCardProps {
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, onEdit }) => {
   const { t } = useTranslation();
   const { user: currentUser } = useAuth();
-  const [showShareForm, setShowShareForm] = useState(false);
-  const [shareEmail, setShareEmail] = useState('');
-  const { shareTask, unshareTask, isSharing, isUnsharing } = useTaskShare();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const { unshareTask, isUnsharing } = useTaskShare();
 
   const isOwner = currentUser?.id === task.owner.id;
-
-  const handleShare = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await shareTask({ id: task.id, email: shareEmail });
-      setShowShareForm(false);
-      setShareEmail('');
-    } catch (error) {
-      console.error('Sharing failed:', error);
-    }
-  };
 
   const handleUnshare = async (email: string) => {
     try {
@@ -106,9 +95,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                     className="group flex items-center bg-gray-100 dark:bg-gray-700 rounded-full pl-1 pr-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
                   >
                     <div className="w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-white mr-1">
-                      {u.name[0]}
+                      {u.name ? u.name[0] : u.username[0]}
                     </div>
-                    <span className="max-w-[80px] truncate" title={u.email}>{u.name}</span>
+                    <span className="max-w-[80px] truncate" title={u.email}>{u.name || u.username}</span>
                     {isOwner && (
                       <button 
                         onClick={() => handleUnshare(u.email)}
@@ -127,10 +116,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
         <div className="flex space-x-1">
           {isOwner && (
             <button 
-              onClick={() => setShowShareForm(!showShareForm)} 
+              onClick={() => setIsShareModalOpen(true)} 
               className={clsx(
-                "p-1 transition-colors",
-                showShareForm ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                "p-1 transition-colors text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
               )}
               title={t('tasks.share')}
             >
@@ -146,25 +134,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
         </div>
       </div>
 
-      {showShareForm && isOwner && (
-        <form onSubmit={handleShare} className="mt-4 flex space-x-2">
-          <input
-            type="email"
-            placeholder={t('auth.email')}
-            required
-            className="flex-1 px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
-            value={shareEmail}
-            onChange={(e) => setShareEmail(e.target.value)}
-          />
-          <button
-            type="submit"
-            disabled={isSharing}
-            className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 min-w-[70px]"
-          >
-            {isSharing ? '...' : t('tasks.share')}
-          </button>
-        </form>
-      )}
+      <ShareTaskModal
+        task={task}
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
     </div>
   );
 };
