@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
-import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X, Languages, Sun, Moon, CheckCircle2, User } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
@@ -84,8 +84,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 {t('categories.title')}
               </h3>
-              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title={t('categories.newCategory')}>
-                <PlusCircle size={16} />
+              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title={t('categories.manageCategories')}>
+                <Settings2 size={16} />
               </button>
             </div>
             <div className="space-y-1">

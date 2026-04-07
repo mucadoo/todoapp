@@ -92,6 +92,7 @@
   "categories": {
     "title": "Categorias",
     "newCategory": "Nova Categoria",
+    "manageCategories": "Gerenciar Categorias",
     "editCategory": "Editar Categoria",
     "name": "Nome da Categoria",
     "color": "Cor",
