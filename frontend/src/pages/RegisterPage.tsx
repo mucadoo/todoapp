@@ -98,7 +98,7 @@ export const RegisterPage: React.FC = () => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/;
+    const usernameRegex = /^[a-z_]+$/; // Updated regex for lowercase and underscores
 
     if (!formData.name) {
       newErrors.name = t('auth.nameRequired');
@@ -111,7 +111,7 @@ export const RegisterPage: React.FC = () => {
     } else if (formData.username.length < 3) {
       newErrors.username = t('auth.usernameTooShort');
     } else if (!usernameRegex.test(formData.username)) {
-      newErrors.username = t('auth.invalidUsername');
+      newErrors.username = t('auth.invalidUsernameFormat'); // New error message key
     } else if (isUsernameTaken) {
       newErrors.username = t('auth.usernameTaken');
     }

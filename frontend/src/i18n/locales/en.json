@@ -62,7 +62,8 @@
     "confirmNewPassword": "Confirm New Password",
     "passwordChangeSuccess": "Password updated successfully",
     "passwordChangeError": "Failed to update password",
-    "wrongOldPassword": "Wrong current password"
+    "wrongOldPassword": "Wrong current password",
+    "invalidUsernameFormat": "Username must only contain lowercase letters and underscores"
   },
   "tasks": {
     "title": "Tasks",

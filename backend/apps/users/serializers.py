@@ -1,8 +1,14 @@
+import re
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+def validate_username_format(value):
+    if not re.match(r'^[a-z_]+$', value):
+        raise serializers.ValidationError("Username must only contain lowercase letters and underscores")
+    return value
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    username = serializers.CharField(validators=[validate_username_format])
 
     class Meta:
         model = User
@@ -74,6 +81,7 @@ class UpdateUsernameSerializer(serializers.ModelSerializer):
         fields = ('username',)
 
     def validate_username(self, value):
+        validate_username_format(value)
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username already exists")
         return value

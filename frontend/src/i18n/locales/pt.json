@@ -62,7 +62,8 @@
     "confirmNewPassword": "Confirmar Nova Senha",
     "passwordChangeSuccess": "Senha atualizada com sucesso",
     "passwordChangeError": "Falha ao atualizar a senha",
-    "wrongOldPassword": "Senha atual incorreta"
+    "wrongOldPassword": "Senha atual incorreta",
+    "invalidUsernameFormat": "O nome de usuário deve conter apenas letras minúsculas e sublinhados"
   },
   "tasks": {
     "title": "Tarefas",

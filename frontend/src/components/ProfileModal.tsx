@@ -154,12 +154,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   const validateProfile = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[a-z_]+$/; // Updated regex for lowercase and underscores
 
     if (!name) newErrors.name = t('auth.nameRequired');
     else if (name.length < 2) newErrors.name = t('auth.nameTooShort');
 
     if (!username) newErrors.username = t('auth.usernameRequired');
     else if (username.length < 3) newErrors.username = t('auth.usernameTooShort');
+    else if (!usernameRegex.test(username)) newErrors.username = t('auth.invalidUsernameFormat'); // New error message
     else if (isUsernameTaken) newErrors.username = t('auth.usernameTaken');
 
     if (!email) newErrors.email = t('auth.emailRequired');
