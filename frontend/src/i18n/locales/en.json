@@ -50,7 +50,8 @@
     "invalidUsername": "Invalid username format",
     "usernameUpdateSuccess": "Username updated successfully",
     "usernameUpdateError": "Failed to update username",
-    "usernameTaken": "This username is already taken"
+    "usernameTaken": "This username is already taken",
+    "usernameTooShort": "Username must be at least 3 characters"
   },
   "tasks": {
     "title": "Tasks",

@@ -20,6 +20,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [username, setUsername] = useState(user?.username || '');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (user) {
@@ -54,8 +55,35 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
 
   if (!isOpen) return null;
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name) {
+      newErrors.name = t('auth.nameRequired');
+    } else if (name.length < 2) {
+      newErrors.name = t('auth.nameTooShort');
+    }
+
+    if (!username) {
+      newErrors.username = t('auth.usernameRequired');
+    } else if (username.length < 3) {
+      newErrors.username = t('auth.usernameTooShort');
+    }
+
+    if (!email) {
+      newErrors.email = t('auth.emailRequired');
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = t('auth.invalidEmail');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
     
     const promises = [];
     
@@ -105,12 +133,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               </div>
               <input
                 type="text"
-                required
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-colors"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+            {errors.name && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.name}</p>}
           </div>
 
           <div>
@@ -123,12 +151,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               </div>
               <input
                 type="text"
-                required
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-colors"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
+            {errors.username && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.username}</p>}
           </div>
 
           <div>
@@ -141,12 +169,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               </div>
               <input
                 type="email"
-                required
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-colors"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            {errors.email && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>}
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

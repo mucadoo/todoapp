@@ -50,7 +50,8 @@
     "invalidUsername": "Formato de nome de usuário inválido",
     "usernameUpdateSuccess": "Nome de usuário atualizado com sucesso",
     "usernameUpdateError": "Falha ao atualizar o nome de usuário",
-    "usernameTaken": "Este nome de usuário já está em uso"
+    "usernameTaken": "Este nome de usuário já está em uso",
+    "usernameTooShort": "O nome de usuário deve ter pelo menos 3 caracteres"
   },
   "tasks": {
     "title": "Tarefas",

@@ -50,7 +50,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   const checkUsernameAvailability = async () => {
-    if (!formData.username || formData.username.length < 3) return;
+    if (!formData.username || formData.username.length < 3) return; // Only check if length is valid
 
     setIsCheckingUsername(true);
     try {
@@ -69,7 +69,7 @@ export const RegisterPage: React.FC = () => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/;
+    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/; // Regex already enforces min length 3
 
     if (!formData.name) {
       newErrors.name = t('auth.nameRequired');
@@ -79,6 +79,8 @@ export const RegisterPage: React.FC = () => {
 
     if (!formData.username) {
       newErrors.username = t('auth.usernameRequired');
+    } else if (formData.username.length < 3) { // Explicit check for min length
+      newErrors.username = t('auth.usernameTooShort');
     } else if (!usernameRegex.test(formData.username)) {
       newErrors.username = t('auth.invalidUsername');
     } else if (isUsernameTaken) {
