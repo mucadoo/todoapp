@@ -9,9 +9,10 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
+  const hasToken = !!localStorage.getItem('access_token');
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (isLoading && hasToken) return <div>Loading...</div>;
+  if (!user && !isLoading) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
 };

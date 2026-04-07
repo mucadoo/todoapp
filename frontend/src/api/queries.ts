@@ -11,6 +11,7 @@ export const useAuth = () => {
     queryFn: authApi.me,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 mins
+    enabled: !!localStorage.getItem('access_token'),
   });
 
   const loginMutation = useMutation({

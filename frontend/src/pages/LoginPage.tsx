@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../api/queries';
 
@@ -8,7 +8,13 @@ export const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   
   const navigate = useNavigate();
-  const { login, isLoggingIn } = useAuth();
+  const { login, isLoggingIn, user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};

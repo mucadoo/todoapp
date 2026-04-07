@@ -24,10 +24,16 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    const isLoginPath = window.location.pathname === '/login';
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isLoginPath) {
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+        
         const response = await axios.post(`${BASE_URL}/auth/refresh/`, {
           refresh: refreshToken,
         });
@@ -38,7 +44,9 @@ api.interceptors.response.use(
       } catch (err) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
+        if (!isLoginPath) {
+          window.location.href = '/login';
+        }
         return Promise.reject(err);
       }
     }
