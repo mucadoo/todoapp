@@ -4,7 +4,7 @@ import { Task } from '../types/tasks';
 import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useTaskShare, useAuth } from '../api/queries';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate, isTaskOverdue } from '../utils/dateUtils';
 import { ShareTaskModal } from './ShareTaskModal';
 
 interface TaskCardProps {
@@ -21,7 +21,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
   const { unshareTask, isUnsharing } = useTaskShare();
 
   const isOwner = currentUser?.id === task.owner.id;
-  const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.is_completed;
+  const isOverdue = isTaskOverdue(task.due_date, task.has_time, task.is_completed);
 
   const handleUnshare = async (email: string) => {
     try {

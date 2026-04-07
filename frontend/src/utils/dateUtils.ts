@@ -1,4 +1,4 @@
-import { parseISO } from 'date-fns';
+import { parseISO, isBefore, endOfDay, startOfToday } from 'date-fns';
 
 /**
  * Gets the user's browser locale.
@@ -33,5 +33,22 @@ export const formatRelativeDate = (dateString: string) => {
   } catch (error) {
     console.error('Error formatting relative date:', error);
     return dateString;
+  }
+};
+
+export const isTaskOverdue = (due_date: string | null, hasTime: boolean, isCompleted: boolean) => {
+  if (!due_date || isCompleted) return false;
+  
+  const now = new Date();
+  const dueDate = parseISO(due_date);
+  
+  if (hasTime) {
+    // If has time, overdue if exact moment has passed
+    return isBefore(dueDate, now);
+  } else {
+    // If no time, only overdue if the entire day has passed (compare with start of today)
+    // Actually, if it's "today" without a time, it's not overdue yet.
+    // It becomes overdue tomorrow.
+    return isBefore(endOfDay(dueDate), now);
   }
 };
