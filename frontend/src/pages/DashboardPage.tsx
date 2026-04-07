@@ -8,6 +8,7 @@ import { TaskCard } from '../components/TaskCard';
 import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
 import { ProfileModal } from '../components/ProfileModal';
+import { ConfirmationModal } from '../components/ConfirmationModal';
 import { TaskFilters, Task } from '../types/tasks';
 import { Plus, Loader2, Menu, CheckCircle2, UserCircle, FolderOpen, FilterX } from 'lucide-react';
 import { TaskCardSkeleton } from '../components/Skeleton';
@@ -48,6 +49,7 @@ export const DashboardPage: React.FC = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -100,6 +102,17 @@ export const DashboardPage: React.FC = () => {
   const openEditTask = (task: Task) => {
     setEditingTask(task);
     setIsTaskModalOpen(true);
+  };
+
+  const handleDeleteTask = async () => {
+    if (taskToDelete) {
+      try {
+        await deleteTask(taskToDelete);
+        setTaskToDelete(null);
+      } catch (error) {
+        console.error('Failed to delete task:', error);
+      }
+    }
   };
 
   const getHeaderTitle = () => {
@@ -206,7 +219,7 @@ export const DashboardPage: React.FC = () => {
                     key={task.id}
                     task={task}
                     onToggle={toggleTask}
-                    onDelete={deleteTask}
+                    onDelete={(id) => setTaskToDelete(id)}
                     onEdit={openEditTask}
                   />
                 ))}
@@ -246,6 +259,15 @@ export const DashboardPage: React.FC = () => {
       <ProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={!!taskToDelete}
+        onClose={() => setTaskToDelete(null)}
+        onConfirm={handleDeleteTask}
+        title={t('tasks.deleteConfirmTitle')}
+        message={t('tasks.deleteConfirmMessage')}
+        variant="danger"
       />
     </div>
   );
