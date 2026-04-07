@@ -52,7 +52,14 @@
     "usernameUpdateError": "Failed to update username",
     "usernameTaken": "This username is already taken",
     "usernameTooShort": "Username must be at least 3 characters",
-    "emailTaken": "This email is already in use"
+    "emailTaken": "This email is already in use",
+    "changePassword": "Change Password",
+    "oldPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordChangeSuccess": "Password updated successfully",
+    "passwordChangeError": "Failed to update password",
+    "wrongOldPassword": "Wrong current password"
   },
   "tasks": {
     "title": "Tasks",

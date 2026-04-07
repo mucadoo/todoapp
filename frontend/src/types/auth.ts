@@ -18,3 +18,9 @@ export type LoginCredentials = {
 };
 
 export type RegisterCredentials = Pick<User, 'email' | 'name' | 'username'> & { password: string };
+
+export interface ChangePasswordData {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}

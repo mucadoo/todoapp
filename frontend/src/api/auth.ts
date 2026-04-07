@@ -1,5 +1,5 @@
 import { api } from './axios';
-import { LoginCredentials, RegisterCredentials, User, AuthResponse } from '../types/auth';
+import { LoginCredentials, RegisterCredentials, User, AuthResponse, ChangePasswordData } from '../types/auth';
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
@@ -30,16 +30,24 @@ export const authApi = {
     const { data } = await api.patch<User>('/auth/me/username/', { username });
     return data;
   },
+  changePassword: async (data: ChangePasswordData): Promise<{ message: string }> => {
+    const { data: response } = await api.put<{ message: string }>('/auth/me/password/', data);
+    return response;
+  },
   searchUsers: async (query: string): Promise<User[]> => {
     const { data } = await api.get<User[]>(`/auth/search/?search=${query}`);
     return data;
   },
-  checkUsername: async (username: string): Promise<{ exists: boolean }> => {
-    const { data } = await api.get<{ exists: boolean }>(`/auth/check-username/?username=${username}`);
+  checkUsername: async (username: string, excludeId?: string): Promise<{ exists: boolean }> => {
+    let url = `/auth/check-username/?username=${username}`;
+    if (excludeId) url += `&exclude_id=${excludeId}`;
+    const { data } = await api.get<{ exists: boolean }>(url);
     return data;
   },
-  checkEmail: async (email: string): Promise<{ exists: boolean }> => {
-    const { data } = await api.get<{ exists: boolean }>(`/auth/check-email/?email=${email}`);
+  checkEmail: async (email: string, excludeId?: string): Promise<{ exists: boolean }> => {
+    let url = `/auth/check-email/?email=${email}`;
+    if (excludeId) url += `&exclude_id=${excludeId}`;
+    const { data } = await api.get<{ exists: boolean }>(url);
     return data;
   },
   logout: () => {

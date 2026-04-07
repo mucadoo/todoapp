@@ -52,7 +52,14 @@
     "usernameUpdateError": "Falha ao atualizar o nome de usuário",
     "usernameTaken": "Este nome de usuário já está em uso",
     "usernameTooShort": "O nome de usuário deve ter pelo menos 3 caracteres",
-    "emailTaken": "Este e-mail já está em uso"
+    "emailTaken": "Este e-mail já está em uso",
+    "changePassword": "Alterar Senha",
+    "oldPassword": "Senha Atual",
+    "newPassword": "Nova Senha",
+    "confirmNewPassword": "Confirmar Nova Senha",
+    "passwordChangeSuccess": "Senha atualizada com sucesso",
+    "passwordChangeError": "Falha ao atualizar a senha",
+    "wrongOldPassword": "Senha atual incorreta"
   },
   "tasks": {
     "title": "Tarefas",
