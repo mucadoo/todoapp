@@ -49,7 +49,8 @@
     "usernameRequired": "Nome de usuário é obrigatório",
     "invalidUsername": "Formato de nome de usuário inválido",
     "usernameUpdateSuccess": "Nome de usuário atualizado com sucesso",
-    "usernameUpdateError": "Falha ao atualizar o nome de usuário"
+    "usernameUpdateError": "Falha ao atualizar o nome de usuário",
+    "usernameTaken": "Este nome de usuário já está em uso"
   },
   "tasks": {
     "title": "Tarefas",

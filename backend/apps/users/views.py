@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, filters, status
+from rest_framework import generics, permissions, filters, status, views
 from rest_framework.response import Response
 from .serializers import UserSerializer, RegisterSerializer, UpdateUsernameSerializer
 from django.contrib.auth import get_user_model
@@ -43,3 +43,14 @@ class UpdateUsernameView(generics.UpdateAPIView):
 
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+
+class CheckUsernameView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        username = request.query_params.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        exists = User.objects.filter(username__iexact=username).exists()
+        return Response({'exists': exists})

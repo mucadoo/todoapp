@@ -34,6 +34,10 @@ export const authApi = {
     const { data } = await api.get<User[]>(`/auth/search/?search=${query}`);
     return data;
   },
+  checkUsername: async (username: string): Promise<{ exists: boolean }> => {
+    const { data } = await api.get<{ exists: boolean }>(`/auth/check-username/?username=${username}`);
+    return data;
+  },
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
