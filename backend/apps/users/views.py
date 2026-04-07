@@ -24,6 +24,7 @@ class UserSearchView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'email', 'name']
+    pagination_class = None
 
     def get_queryset(self):
         return User.objects.exclude(id=self.request.user.id)

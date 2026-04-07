@@ -50,12 +50,6 @@ export const useAuth = () => {
     },
   });
 
-  const searchUsersQuery = (searchQuery: string) => useQuery<User[], Error>({
-    queryKey: ['users', searchQuery],
-    queryFn: () => authApi.searchUsers(searchQuery),
-    enabled: !!searchQuery,
-  });
-
   return {
     user,
     isLoading,
@@ -67,8 +61,15 @@ export const useAuth = () => {
     isLoggingIn: loginMutation.isPending,
     isRegistering: registerMutation.isPending,
     isUpdatingUsername: updateUsernameMutation.isPending,
-    searchUsersQuery,
   };
+};
+
+export const useSearchUsers = (searchQuery: string) => {
+  return useQuery<User[], Error>({
+    queryKey: ['users', searchQuery],
+    queryFn: () => authApi.searchUsers(searchQuery),
+    enabled: !!searchQuery,
+  });
 };
 
 export const useTasks = (filters: TaskFilters = {}) => {

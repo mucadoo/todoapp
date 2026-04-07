@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Search, UserPlus, UserMinus } from 'lucide-react';
 import { Task } from '../types/tasks';
 import { User } from '../types/auth';
-import { useAuth, useTaskShare } from '../api/queries';
+import { useSearchUsers, useTaskShare } from '../api/queries';
 import { useDebounce } from '../utils/hooks';
 
 interface ShareTaskModalProps {
@@ -14,12 +14,11 @@ interface ShareTaskModalProps {
 
 export const ShareTaskModal: React.FC<ShareTaskModalProps> = ({ task, isOpen, onClose }) => {
   const { t } = useTranslation();
-  const { searchUsersQuery } = useAuth();
   const { shareTask, unshareTask, isSharing, isUnsharing } = useTaskShare();
 
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const { data: searchResults, isLoading: isSearchingUsers } = searchUsersQuery(debouncedSearchQuery);
+  const { data: searchResults, isLoading: isSearchingUsers } = useSearchUsers(debouncedSearchQuery);
 
   const [sharedUsers, setSharedUsers] = useState<User[]>(task.shared_with || []);
 
@@ -139,7 +138,19 @@ export const ShareTaskModal: React.FC<ShareTaskModalProps> = ({ task, isOpen, on
                       <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs mr-2">
                         {user.name ? user.name[0] : (user.username ? user.username[0] : user.email[0])}
                       </div>
-                      <span className="text-sm text-gray-900 dark:text-white">{user.name || user.username || user.email}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-900 dark:text-white leading-none">
+                          {user.name || user.username}
+                        </span>
+                        {user.name && user.username && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            @{user.username}
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                          {user.email}
+                        </span>
+                      </div>
                     </div>
                     {isUserShared(user) ? (
                       <button
