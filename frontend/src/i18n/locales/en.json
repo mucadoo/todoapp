@@ -32,6 +32,7 @@
     "hasAccount": "Already have an account?",
     "invalidCredentials": "Invalid email/username or password",
     "registrationFailed": "Registration failed. Email might already be in use.",
+    "registrationSuccess": "Registration successful! You can now log in.",
     "emailRequired": "Email is required",
     "passwordRequired": "Password is required",
     "invalidEmail": "Invalid email format",

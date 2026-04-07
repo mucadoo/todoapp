@@ -5,10 +5,12 @@ import { useAuth } from '../api/queries';
 import { useTheme } from '../context/ThemeContext';
 import { authApi } from '../api/auth';
 import { Sun, Moon, Languages, Loader2 } from 'lucide-react';
+import { useToast } from '../components/Toast';
 
 export const RegisterPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isDark, toggleDarkMode } = useTheme();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -149,6 +151,7 @@ export const RegisterPage: React.FC = () => {
         email: formData.email,
         password: formData.password,
       });
+      showToast(t('auth.registrationSuccess'), 'success');
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
