@@ -67,8 +67,8 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md my-8">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
         {errors.general && (

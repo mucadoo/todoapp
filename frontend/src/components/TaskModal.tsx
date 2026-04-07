@@ -49,14 +49,14 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
           <h2 className="text-xl font-bold">{task ? 'Edit Task' : 'New Task'}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
           </button>
         </div>
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>
             <input

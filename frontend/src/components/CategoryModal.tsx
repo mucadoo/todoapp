@@ -26,14 +26,14 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
           <h2 className="text-xl font-bold">Manage Categories</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
           </button>
         </div>
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="flex gap-2 items-end">
               <div className="flex-1">
