@@ -137,7 +137,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
         </div>
 
         <div className="hidden md:block text-sm text-gray-500 dark:text-gray-400 border-l border-gray-200 dark:border-gray-700 pl-4 ml-auto transition-colors">
-          {count} {t('tasks.title').toLowerCase()}
+          {count} {t('tasks.title', { count }).toLowerCase()}
         </div>
       </div>
     </div>

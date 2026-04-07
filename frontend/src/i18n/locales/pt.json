@@ -68,6 +68,8 @@
   },
   "tasks": {
     "title": "Tarefas",
+    "title_one": "Tarefa",
+    "title_other": "Tarefas",
     "newTask": "Nova Tarefa",
     "editTask": "Editar Tarefa",
     "taskTitle": "Título da Tarefa",

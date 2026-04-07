@@ -68,6 +68,8 @@
   },
   "tasks": {
     "title": "Tasks",
+    "title_one": "Task",
+    "title_other": "Tasks",
     "newTask": "New Task",
     "editTask": "Edit Task",
     "taskTitle": "Task Title",
