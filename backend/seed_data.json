@@ -16,6 +16,8 @@
       ],
       "tasks": [
         { "title": "Complete project documentation", "description": "Write and review the final documentation for the TODO app.", "priority": "high", "category": "Work", "due_days": 2 },
+        { "title": "Review last week's goals", "description": "Check what was achieved and what needs to be moved forward.", "priority": "medium", "category": "Work", "due_days": -2 },
+        { "title": "Past due utility bill", "description": "Electricity bill from last month.", "priority": "high", "category": "Urgent", "due_days": -5 },
         { "title": "Buy groceries", "description": "Milk, eggs, bread, and fruits.", "priority": "medium", "category": "Shopping", "due_days": 1 },
         { "title": "Gym workout", "description": "Leg day today!", "priority": "low", "category": "Health", "due_hours": 5 },
         { "title": "Fix critical bug", "description": "The auth loop is back, need to investigate.", "priority": "high", "category": "Urgent", "due_hours": 2 },
@@ -62,6 +64,7 @@
       ],
       "tasks": [
         { "title": "Test login flow", "description": "Verify that login works with valid and invalid credentials.", "priority": "high", "category": "Bug Reports", "due_hours": 1 },
+        { "title": "Check old regression bugs", "description": "Verify if bugs fixed 2 weeks ago are still gone.", "priority": "medium", "category": "Bug Reports", "due_days": -14 },
         { "title": "Write automation script for tasks", "description": "Use Playwright to automate task creation testing.", "priority": "medium", "category": "Automation", "due_days": 3 },
         { "title": "Verify dark mode UI", "description": "Check if all components render correctly in dark mode.", "priority": "low", "category": "Feature Testing", "due_days": 5 },
         { "title": "Regression test on categories", "description": "Ensure category deletion doesn't break task association.", "priority": "high", "category": "Bug Reports", "due_hours": 4 },

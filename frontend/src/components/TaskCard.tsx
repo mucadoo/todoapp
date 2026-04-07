@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Task } from '../types/tasks';
-import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle } from 'lucide-react';
+import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useTaskShare, useAuth } from '../api/queries';
 import { formatDate } from '../utils/dateUtils';
@@ -21,6 +21,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
   const { unshareTask, isUnsharing } = useTaskShare();
 
   const isOwner = currentUser?.id === task.owner.id;
+  const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.is_completed;
 
   const handleUnshare = async (email: string) => {
     try {
@@ -38,12 +39,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
 
   return (
     <div className={clsx(
-      "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 relative",
-      task.is_completed && "opacity-75"
+      "bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 relative",
+      task.is_completed ? "opacity-75 border-gray-200 dark:border-gray-700" : (isOverdue ? "border-red-300 dark:border-red-900/50" : "border-gray-200 dark:border-gray-700")
     )}>
       {!isOwner && (
         <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider">
           {t('tasks.shared')}
+        </div>
+      )}
+
+      {isOverdue && (
+        <div className="absolute -top-2 left-4 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold rounded-md flex items-center space-x-1 border border-red-200 dark:border-red-800/50 uppercase tracking-wide">
+          <AlertCircle size={10} />
+          <span>{t('tasks.overdue')}</span>
         </div>
       )}
 
@@ -53,7 +61,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
             onClick={() => onToggle(task.id)}
             className={clsx(
               "mt-1 focus:outline-none",
-              task.is_completed ? "text-green-500" : "text-gray-400"
+              task.is_completed ? "text-green-500" : (isOverdue ? "text-red-400" : "text-gray-400")
             )}
           >
             {task.is_completed ? <CheckCircle size={20} /> : <Circle size={20} />}
@@ -81,7 +89,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                 {t(`tasks.${task.priority}`)}
               </span>
               {task.due_date && (
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className={clsx(
+                  "text-xs font-medium",
+                  isOverdue ? "text-red-600 dark:text-red-400" : "text-gray-500 dark:text-gray-400"
+                )}>
                   {t('tasks.dueDate')}: {formatDate(task.due_date, { dateStyle: 'short' })}
                 </span>
               )}
