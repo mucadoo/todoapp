@@ -107,16 +107,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <LayoutDashboard size={20} />
               <span>{t('common.allTasks')}</span>
             </button>
-            <button
-              onClick={() => handleCategoryClick('null')}
-              className={clsx(
-                "flex items-center space-x-3 w-full px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                currentCategory === 'null' ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-              )}
-            >
-              <FilterX size={20} />
-              <span>{t('tasks.noCategory')}</span>
-            </button>
           </div>
 
           <div>
@@ -129,6 +119,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </div>
             <div className="space-y-1">
+              <button
+                onClick={() => handleCategoryClick('null')}
+                className={clsx(
+                  "flex items-center space-x-3 w-full px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                  currentCategory === 'null' ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                )}
+              >
+                <FilterX size={20} />
+                <span>{t('tasks.noCategory')}</span>
+              </button>
               {isLoading ? (
                 <>
                   <SidebarItemSkeleton />
