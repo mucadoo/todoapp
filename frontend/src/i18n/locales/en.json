@@ -111,6 +111,7 @@
   },
   "categories": {
     "title": "Categories",
+    "shared": "Shared Categories",
     "newCategory": "New Category",
     "manageCategories": "Manage Categories",
     "editCategory": "Edit Category",

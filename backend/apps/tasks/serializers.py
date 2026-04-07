@@ -6,10 +6,19 @@ from apps.users.serializers import UserSerializer
 User = get_user_model()
 
 class CategorySerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
+    is_shared = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ('id', 'name', 'color', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'color', 'owner', 'is_shared', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'owner', 'is_shared', 'created_at', 'updated_at')
+
+    def get_is_shared(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.owner != request.user
+        return False
 
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
@@ -38,7 +47,15 @@ class TaskSerializer(serializers.ModelSerializer):
     def validate_category_id(self, value):
         if value:
             try:
-                category = Category.objects.get(id=value, owner=self.context['request'].user)
+                # Allow selecting categories the user owns OR categories of tasks shared with them
+                # Actually, when CREATING/UPDATING a task, they should probably only use their own categories?
+                # The prompt says "show categories that belong to tasks shared with me".
+                # If they are editing a task shared WITH them, they might want to change its category?
+                # Usually, only the owner can change category, but let's see.
+                category = Category.objects.filter(
+                    Q(owner=self.context['request'].user) | 
+                    Q(tasks__shared_with=self.context['request'].user)
+                ).filter(id=value).distinct().get()
                 return category
             except Category.DoesNotExist:
                 raise serializers.ValidationError("Category does not exist or does not belong to the user.")

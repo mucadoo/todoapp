@@ -4,6 +4,8 @@ export interface Category {
   id: string;
   name: string;
   color: string;
+  owner?: User;
+  is_shared?: boolean;
   created_at: string;
   updated_at: string;
 }

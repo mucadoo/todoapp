@@ -111,6 +111,7 @@
   },
   "categories": {
     "title": "Categorias",
+    "shared": "Categorias Compartilhadas",
     "newCategory": "Nova Categoria",
     "manageCategories": "Gerenciar Categorias",
     "editCategory": "Editar Categoria",

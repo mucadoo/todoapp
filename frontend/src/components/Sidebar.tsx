@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useCategories } from '../api/queries';
-import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User, FilterX } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User, FilterX, Users } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { Category } from '../types/tasks';
 
 interface SidebarProps {
   currentCategory?: string;
@@ -34,6 +35,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     i18n.changeLanguage(nextLang);
   };
 
+  const { ownedCategories, sharedCategories } = useMemo(() => {
+    if (!categories?.results) return { ownedCategories: [], sharedCategories: [] };
+    return {
+      ownedCategories: categories.results.filter(c => !c.is_shared),
+      sharedCategories: categories.results.filter(c => c.is_shared)
+    };
+  }, [categories]);
+
   const sidebarClasses = clsx(
     "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-full",
     isOpen ? "translate-x-0" : "-translate-x-full"
@@ -43,6 +52,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onCategorySelect(id);
     if (onClose) onClose();
   };
+
+  const renderCategoryItem = (category: Category) => (
+    <button
+      key={category.id}
+      onClick={() => handleCategoryClick(category.id)}
+      className={clsx(
+        "flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors group",
+        currentCategory === category.id ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+      )}
+    >
+      <FolderOpen size={20} style={{ color: category.color }} className="opacity-80 group-hover:opacity-100 transition-opacity" />
+      <div className="flex flex-col items-start min-w-0">
+        <span className="truncate w-full text-left">{category.name}</span>
+        {category.is_shared && category.owner && (
+          <span className="text-[10px] text-gray-400 truncate w-full text-left -mt-0.5">
+            {category.owner.name || category.owner.username}
+          </span>
+        )}
+      </div>
+    </button>
+  );
 
   return (
     <>
@@ -103,25 +133,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <>
                   <SidebarItemSkeleton />
                   <SidebarItemSkeleton />
-                  <SidebarItemSkeleton />
                 </>
               ) : (
-                categories?.results.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => handleCategoryClick(category.id)}
-                    className={clsx(
-                      "flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors group",
-                      currentCategory === category.id ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    )}
-                  >
-                    <FolderOpen size={20} style={{ color: category.color }} className="opacity-80 group-hover:opacity-100 transition-opacity" />
-                    <span className="truncate">{category.name}</span>
-                  </button>
-                ))
+                ownedCategories.map(renderCategoryItem)
               )}
             </div>
           </div>
+
+          {sharedCategories.length > 0 && (
+            <div>
+              <div className="flex items-center px-3 mb-2">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center space-x-1.5">
+                  <Users size={12} />
+                  <span>{t('categories.shared')}</span>
+                </h3>
+              </div>
+              <div className="space-y-1">
+                {sharedCategories.map(renderCategoryItem)}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-1 bg-gray-50/50 dark:bg-gray-800/50">
