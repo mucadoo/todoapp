@@ -142,8 +142,8 @@ export const DashboardPage: React.FC = () => {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20 transition-colors duration-200">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 shrink-0 px-4 sm:px-8 flex justify-between items-center z-20 transition-colors duration-200">
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -180,7 +180,7 @@ export const DashboardPage: React.FC = () => {
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-8 space-y-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
           <FilterBar
             filters={filters}
             onFilterChange={handleFilterChange}
