@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Task } from '../types/tasks';
-import { CheckCircle, Circle, Share2, MoreVertical, Trash2, Edit2 } from 'lucide-react';
+import { CheckCircle, Circle, Share2, Trash2, Edit2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useTaskShare } from '../api/queries';
 

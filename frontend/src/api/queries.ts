@@ -92,7 +92,7 @@ export const useTasks = (filters: TaskFilters = {}) => {
 
       return { previousTasks };
     },
-    onError: (err, id, context) => {
+    onError: (_err, _id, context) => {
       queryClient.setQueryData(['tasks', filters], context?.previousTasks);
     },
     onSettled: () => {

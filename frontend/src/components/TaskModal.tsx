@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Task, Category, Priority } from '../types/tasks';
+import { Task, Category } from '../types/tasks';
 import { useCategories } from '../api/queries';
 import { X } from 'lucide-react';
 
