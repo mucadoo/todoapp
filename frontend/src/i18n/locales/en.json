@@ -11,7 +11,9 @@
     "create": "Create",
     "actions": "Actions",
     "logout": "Logout",
-    "profile": "Profile"
+    "profile": "Profile",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
   },
   "auth": {
     "login": "Login",

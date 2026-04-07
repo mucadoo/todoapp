@@ -11,7 +11,9 @@
     "create": "Criar",
     "actions": "Ações",
     "logout": "Sair",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "darkMode": "Modo Escuro",
+    "lightMode": "Modo Claro"
   },
   "auth": {
     "login": "Entrar",

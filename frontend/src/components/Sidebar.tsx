@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
-import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X, Languages } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X, Languages, Sun, Moon } from 'lucide-react';
+import { useDarkMode } from '../hooks/useDarkMode';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const { categories, isLoading } = useCategories();
+  const { isDark, toggleDarkMode } = useDarkMode();
 
   const toggleLanguage = () => {
     const nextLang = i18n.language.startsWith('en') ? 'pt' : 'en';
@@ -31,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarClasses = clsx(
-    "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:pt-16",
+    "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:pt-16",
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
@@ -52,8 +54,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <aside className={sidebarClasses}>
         <div className="flex items-center justify-between px-4 py-4 lg:hidden">
-          <h2 className="text-xl font-bold text-gray-900">Menu</h2>
-          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menu</h2>
+          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
             <X size={24} />
           </button>
         </div>
@@ -64,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => handleCategoryClick(undefined)}
               className={clsx(
                 "flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                !currentCategory ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"
+                !currentCategory ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               )}
             >
               <LayoutDashboard size={20} />
@@ -74,10 +76,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <div>
             <div className="flex items-center justify-between px-3 mb-2">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 {t('categories.title')}
               </h3>
-              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600" title={t('categories.newCategory')}>
+              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" title={t('categories.newCategory')}>
                 <PlusCircle size={16} />
               </button>
             </div>
@@ -95,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onClick={() => handleCategoryClick(category.id)}
                     className={clsx(
                       "flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      currentCategory === category.id ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"
+                      currentCategory === category.id ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     )}
                   >
                     <FolderOpen size={20} style={{ color: category.color }} />
@@ -107,17 +109,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
           <button
             onClick={toggleLanguage}
-            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <Languages size={20} />
             <span>{i18n.language.startsWith('en') ? 'Português' : 'English'}</span>
           </button>
           <button
+            onClick={toggleDarkMode}
+            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            <span>{isDark ? t('common.lightMode') : t('common.darkMode')}</span>
+          </button>
+          <button
             onClick={onLogout}
-            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             <LogOut size={20} />
             <span>{t('common.logout')}</span>

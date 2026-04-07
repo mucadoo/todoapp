@@ -31,14 +31,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
   };
 
   const priorityColors = {
-    low: 'bg-blue-100 text-blue-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800',
+    low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+    medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+    high: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   };
 
   return (
     <div className={clsx(
-      "bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow",
+      "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200",
       task.is_completed && "opacity-75"
     )}>
       <div className="flex items-start justify-between">
@@ -54,13 +54,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
           </button>
           <div>
             <h3 className={clsx(
-              "text-lg font-semibold",
-              task.is_completed && "line-through text-gray-500"
+              "text-lg font-semibold dark:text-white",
+              task.is_completed && "line-through text-gray-500 dark:text-gray-400"
             )}>
               {task.title}
             </h3>
             {task.description && (
-              <p className="text-gray-600 text-sm mt-1">{task.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{task.description}</p>
             )}
             <div className="flex items-center space-x-2 mt-3 flex-wrap">
               {task.category && (
@@ -75,7 +75,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                 {t(`tasks.${task.priority}`)}
               </span>
               {task.due_date && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   {t('tasks.dueDate')}: {formatDate(task.due_date, { dateStyle: 'short' })}
                 </span>
               )}
@@ -83,7 +83,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
             {task.shared_with.length > 0 && (
               <div className="flex -space-x-1 mt-3">
                 {task.shared_with.map((u) => (
-                  <div key={u.id} className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white border-2 border-white ring-1 ring-gray-100" title={u.email}>
+                  <div key={u.id} className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white border-2 border-white dark:border-gray-800 ring-1 ring-gray-100 dark:ring-gray-700" title={u.email}>
                     {u.name[0]}
                   </div>
                 ))}
@@ -92,13 +92,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
           </div>
         </div>
         <div className="flex space-x-1">
-          <button onClick={() => setShowShareForm(!showShareForm)} className="p-1 text-gray-400 hover:text-indigo-600" title="Share">
+          <button onClick={() => setShowShareForm(!showShareForm)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400" title="Share">
             <Share2 size={18} />
           </button>
-          <button onClick={() => onEdit(task)} className="p-1 text-gray-400 hover:text-blue-600" title={t('common.edit')}>
+          <button onClick={() => onEdit(task)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400" title={t('common.edit')}>
             <Edit2 size={18} />
           </button>
-          <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 hover:text-red-600" title={t('common.delete')}>
+          <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400" title={t('common.delete')}>
             <Trash2 size={18} />
           </button>
         </div>
@@ -110,7 +110,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
             type="email"
             placeholder={t('auth.email')}
             required
-            className="flex-1 px-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="flex-1 px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
             value={shareEmail}
             onChange={(e) => setShareEmail(e.target.value)}
           />

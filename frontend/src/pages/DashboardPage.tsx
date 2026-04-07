@@ -85,7 +85,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col lg:flex-row transition-colors duration-200">
       <Sidebar
         currentCategory={filters.category}
         onCategorySelect={handleCategorySelect}
@@ -96,20 +96,20 @@ export const DashboardPage: React.FC = () => {
       />
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="bg-white border-b border-gray-200 py-4 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20 transition-colors duration-200">
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 -ml-2 text-gray-600 lg:hidden hover:bg-gray-100 rounded-md"
+              className="p-2 -ml-2 text-gray-600 dark:text-gray-400 lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate max-w-[150px] sm:max-w-none">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-none">
               {filters.category ? t('tasks.category') : t('tasks.title')}
             </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <span className="hidden sm:inline text-sm font-medium text-gray-700">Hi, {user?.name}</span>
+            <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">Hi, {user?.name}</span>
             <button
               onClick={() => {
                 setEditingTask(null);
@@ -138,7 +138,7 @@ export const DashboardPage: React.FC = () => {
               ))}
             </div>
           ) : tasks?.results.length === 0 ? (
-            <div className="bg-white p-12 rounded-lg shadow-sm border text-center text-gray-500">
+            <div className="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 transition-colors duration-200">
               <p className="text-lg font-medium">No tasks found.</p>
               <p className="text-sm">Try adjusting your filters or create a new task!</p>
             </div>
@@ -158,13 +158,13 @@ export const DashboardPage: React.FC = () => {
               
               <div ref={loadMoreRef} className="py-8 flex justify-center">
                 {isFetchingNextPage && (
-                  <div className="flex items-center space-x-2 text-gray-500">
+                  <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
                     <Loader2 className="animate-spin" size={24} />
                     <span>{t('common.loading')}</span>
                   </div>
                 )}
                 {!hasNextPage && tasks && tasks.results.length > 0 && (
-                  <p className="text-gray-400 text-sm">{t('common.noMoreTasks')}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm">{t('common.noMoreTasks')}</p>
                 )}
               </div>
             </>

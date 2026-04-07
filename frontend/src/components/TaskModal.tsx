@@ -50,40 +50,40 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
-          <h2 className="text-xl font-bold">{task ? t('tasks.editTask') : t('tasks.newTask')}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 transition-all">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col transition-colors duration-200">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center flex-shrink-0">
+          <h2 className="text-xl font-bold dark:text-white">{task ? t('tasks.editTask') : t('tasks.newTask')}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
             <X size={24} />
           </button>
         </div>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div>
-            <label className="block text-sm font-medium text-gray-700">{t('tasks.taskTitle')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.taskTitle')}</label>
             <input
               type="text"
               {...register('title', { required: true })}
-              className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-600">Title is required</p>}
+            {errors.title && <p className="mt-1 text-sm text-red-600 dark:text-red-400">Title is required</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">{t('tasks.description')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.description')}</label>
             <textarea
               {...register('description')}
               rows={3}
-              className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('tasks.priority')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.priority')}</label>
               <select
                 {...register('priority')}
-                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
               >
                 <option value="low">{t('tasks.low')}</option>
                 <option value="medium">{t('tasks.medium')}</option>
@@ -91,10 +91,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('tasks.category')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.category')}</label>
               <select
                 {...register('category_id')}
-                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
               >
                 <option value="">{t('common.all')}</option>
                 {categories?.results.map((c: Category) => (
@@ -105,11 +105,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">{t('tasks.dueDate')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.dueDate')}</label>
             <input
               type="date"
               {...register('due_date')}
-              className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
           </div>
 
@@ -117,7 +117,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               {t('common.cancel')}
             </button>
