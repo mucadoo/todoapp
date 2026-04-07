@@ -28,10 +28,16 @@ class TaskFilter(filters.FilterSet):
     # correctly by treating input as a full day range.
     due_date_before = filters.DateFilter(field_name="due_date", lookup_expr='lte')
     due_date_after = filters.DateFilter(field_name="due_date", lookup_expr='gte')
+    category = filters.CharFilter(method='filter_category')
 
     class Meta:
         model = Task
         fields = ['is_completed', 'priority', 'category']
+
+    def filter_category(self, queryset, name, value):
+        if value == 'null':
+            return queryset.filter(category__isnull=True)
+        return queryset.filter(category=value)
 
 class TaskListCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer

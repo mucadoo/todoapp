@@ -45,7 +45,9 @@
         { "title": "Pay utility bills", "description": "Electricity and water bills.", "priority": "high", "category": "Urgent", "due_days": 3 },
         { "title": "Take out trash", "description": "Don't forget the recycling.", "priority": "low", "category": "Personal", "due_hours": 1 },
         { "title": "Dentist checkup", "description": "Annual dental cleaning.", "priority": "medium", "category": "Health", "due_days": 15 },
-        { "title": "Draft email to client", "description": "Follow up on the latest project update.", "priority": "high", "category": "Work", "due_days": 0 }
+        { "title": "Draft email to client", "description": "Follow up on the latest project update.", "priority": "high", "category": "Work", "due_days": 0 },
+        { "title": "Uncategorized task 1", "description": "This task has no category.", "priority": "low", "category": null, "due_days": 1 },
+        { "title": "Uncategorized task 2", "description": "Another task with no category.", "priority": "medium", "category": null, "due_hours": 2 }
       ]
     },
     {
@@ -86,7 +88,8 @@
         { "title": "Load testing", "description": "Simulate 100 concurrent users on the API.", "priority": "medium", "category": "Automation", "due_days": 14 },
         { "title": "Write unit tests for Utils", "description": "Cover date formatting and string manipulation.", "priority": "low", "category": "Automation", "due_days": 3 },
         { "title": "Check mobile responsiveness", "description": "Test dashboard on iPhone and Android devices.", "priority": "medium", "category": "Feature Testing", "due_days": 6 },
-        { "title": "Review security headers", "description": "Ensure CSP and HSTS are correctly set.", "priority": "high", "category": "Automation", "due_days": 0 }
+        { "title": "Review security headers", "description": "Ensure CSP and HSTS are correctly set.", "priority": "high", "category": "Automation", "due_days": 0 },
+        { "title": "QA task without category", "description": "Testing null category for QA.", "priority": "low", "category": null, "due_days": 5 }
       ]
     }
   ]
