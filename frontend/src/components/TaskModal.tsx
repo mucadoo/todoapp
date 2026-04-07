@@ -37,6 +37,16 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
 
   if (!isOpen) return null;
 
+  const handleFormSubmit = (data: Partial<Task>) => {
+    // Sanitize data: convert empty strings to null for optional fields
+    const sanitizedData = {
+      ...data,
+      category_id: data.category_id || null,
+      due_date: data.due_date || null,
+    };
+    onSubmit(sanitizedData);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden">
@@ -46,7 +56,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
             <X size={24} />
           </button>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>
             <input
