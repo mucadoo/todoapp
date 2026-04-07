@@ -15,7 +15,8 @@
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "allTasks": "All Tasks",
-    "ordering": "Ordering"
+    "ordering": "Ordering",
+    "welcome": "Hi, {{name}}"
   },
   "auth": {
     "login": "Login",
@@ -37,7 +38,11 @@
     "nameRequired": "Name is required",
     "nameTooShort": "Name must be at least 2 characters",
     "passwordsDoNotMatch": "Passwords do not match",
-    "confirmPassword": "Confirm Password"
+    "confirmPassword": "Confirm Password",
+    "profile": "Profile",
+    "name": "Name",
+    "profileUpdateSuccess": "Profile updated successfully",
+    "profileUpdateError": "Failed to update profile"
   },
   "tasks": {
     "title": "Tasks",
@@ -65,6 +70,13 @@
     "unshareSuccess": "Task unshared successfully",
     "share": "Share",
     "shared": "Shared",
+    "shareTask": "Share Task",
+    "currentlySharedWith": "Currently shared with",
+    "notSharedYet": "Not shared with anyone yet",
+    "searchUsers": "Search Users",
+    "searchPlaceholder": "Search by name, email or username...",
+    "noUsersFound": "No users found",
+    "unshare": "Unshare",
     "genericError": "An error occurred with the task",
     "sortBy": {
       "createdAtDesc": "Newest first",

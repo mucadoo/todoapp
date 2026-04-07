@@ -15,7 +15,8 @@
     "darkMode": "Modo Escuro",
     "lightMode": "Modo Claro",
     "allTasks": "Todas as Tarefas",
-    "ordering": "Ordenação"
+    "ordering": "Ordenação",
+    "welcome": "Olá, {{name}}"
   },
   "auth": {
     "login": "Entrar",
@@ -37,7 +38,11 @@
     "nameRequired": "Nome é obrigatório",
     "nameTooShort": "O nome deve ter pelo menos 2 caracteres",
     "passwordsDoNotMatch": "As senhas não coincidem",
-    "confirmPassword": "Confirmar Senha"
+    "confirmPassword": "Confirmar Senha",
+    "profile": "Perfil",
+    "name": "Nome",
+    "profileUpdateSuccess": "Perfil atualizado com sucesso",
+    "profileUpdateError": "Falha ao atualizar o perfil"
   },
   "tasks": {
     "title": "Tarefas",
@@ -65,6 +70,13 @@
     "unshareSuccess": "Compartilhamento removido com sucesso",
     "share": "Compartilhar",
     "shared": "Compartilhada",
+    "shareTask": "Compartilhar Tarefa",
+    "currentlySharedWith": "Atualmente compartilhado com",
+    "notSharedYet": "Ainda não compartilhado com ninguém",
+    "searchUsers": "Buscar Usuários",
+    "searchPlaceholder": "Buscar por nome, e-mail ou nome de usuário...",
+    "noUsersFound": "Nenhum usuário encontrado",
+    "unshare": "Remover compartilhamento",
     "genericError": "Ocorreu um erro com a tarefa",
     "sortBy": {
       "createdAtDesc": "Mais recentes",

@@ -8,9 +8,8 @@ import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { TaskFilters, Task } from '../types/tasks';
-import { Plus, Loader2, Menu, CheckCircle2, UserCircle } from 'lucide-react';
+import { Plus, Loader2, Menu, CheckCircle2, UserCircle, FolderOpen } from 'lucide-react';
 import { TaskCardSkeleton } from '../components/Skeleton';
-import { clsx } from 'clsx';
 
 
 export const DashboardPage: React.FC = () => {
@@ -123,6 +122,9 @@ export const DashboardPage: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
+            <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('common.welcome', { name: user?.name })}
+            </span>
             <button
               onClick={() => setIsProfileModalOpen(true)}
               className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors hidden sm:block"
