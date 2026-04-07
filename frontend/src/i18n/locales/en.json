@@ -29,8 +29,6 @@
     "fullName": "Full Name",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
-    "loginTitle": "Welcome back",
-    "registerTitle": "Create your account",
     "invalidCredentials": "Invalid email or password",
     "registrationFailed": "Registration failed. Email might already be in use.",
     "emailRequired": "Email is required",
@@ -44,7 +42,14 @@
     "profile": "Profile",
     "name": "Name",
     "profileUpdateSuccess": "Profile updated successfully",
-    "profileUpdateError": "Failed to update profile"
+    "profileUpdateError": "Failed to update profile",
+    "emailOrUsername": "Email or Username",
+    "emailOrUsernameRequired": "Email or username is required",
+    "invalidEmailOrUsername": "Invalid email or username",
+    "usernameRequired": "Username is required",
+    "invalidUsername": "Invalid username format",
+    "usernameUpdateSuccess": "Username updated successfully",
+    "usernameUpdateError": "Failed to update username"
   },
   "tasks": {
     "title": "Tasks",

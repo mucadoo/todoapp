@@ -16,7 +16,9 @@
     "lightMode": "Modo Claro",
     "allTasks": "Todas as Tarefas",
     "ordering": "Ordenação",
-    "welcome": "Olá, {{name}}"
+    "welcome": "Olá, {{name}}",
+    "confirm": "Confirmar",
+    "areYouSure": "Você tem certeza?"
   },
   "auth": {
     "login": "Entrar",
@@ -27,8 +29,6 @@
     "fullName": "Nome Completo",
     "noAccount": "Não tem uma conta?",
     "hasAccount": "Já tem uma conta?",
-    "loginTitle": "Bem-vindo de volta",
-    "registerTitle": "Crie sua conta",
     "invalidCredentials": "E-mail ou senha inválidos",
     "registrationFailed": "Falha no cadastro. O e-mail já pode estar em uso.",
     "emailRequired": "E-mail é obrigatório",
@@ -42,7 +42,14 @@
     "profile": "Perfil",
     "name": "Nome",
     "profileUpdateSuccess": "Perfil atualizado com sucesso",
-    "profileUpdateError": "Falha ao atualizar o perfil"
+    "profileUpdateError": "Falha ao atualizar o perfil",
+    "emailOrUsername": "E-mail ou Usuário",
+    "emailOrUsernameRequired": "E-mail ou nome de usuário é obrigatório",
+    "invalidEmailOrUsername": "E-mail ou nome de usuário inválido",
+    "usernameRequired": "Nome de usuário é obrigatório",
+    "invalidUsername": "Formato de nome de usuário inválido",
+    "usernameUpdateSuccess": "Nome de usuário atualizado com sucesso",
+    "usernameUpdateError": "Falha ao atualizar o nome de usuário"
   },
   "tasks": {
     "title": "Tarefas",
@@ -78,6 +85,9 @@
     "noUsersFound": "Nenhum usuário encontrado",
     "unshare": "Remover compartilhamento",
     "genericError": "Ocorreu um erro com a tarefa",
+    "deleteConfirmTitle": "Excluir Tarefa",
+    "deleteConfirmMessage": "Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.",
+    "overdue": "Atrasada",
     "sortBy": {
       "createdAtDesc": "Mais recentes",
       "createdAtAsc": "Mais antigas",
@@ -99,6 +109,8 @@
     "createSuccess": "Categoria criada com sucesso",
     "updateSuccess": "Categoria atualizada com sucesso",
     "deleteSuccess": "Categoria excluída com sucesso",
-    "genericError": "Ocorreu um erro com a categoria"
+    "genericError": "Ocorreu um erro com a categoria",
+    "deleteConfirmTitle": "Excluir Categoria",
+    "deleteConfirmMessage": "Tem certeza que deseja excluir esta categoria? Todas as tarefas associadas a ela ficarão sem categoria."
   }
 }
