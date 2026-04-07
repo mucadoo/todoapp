@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Category } from '../types/tasks';
 import { X, Trash2, Plus, Edit2 } from 'lucide-react';
-import { useCategories } from '../api/queries';
+import { useCategories, useAuth } from '../api/queries';
 import { clsx } from 'clsx';
 import { ConfirmationModal } from './ConfirmationModal';
 
@@ -14,6 +14,7 @@ interface CategoryModalProps {
 
 export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
+  const { user: currentUser } = useAuth();
   const { categories, createCategory, updateCategory, deleteCategory } = useCategories();
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
@@ -52,7 +53,10 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
   };
 
   const handleEditClick = (category: Category) => {
-    setEditingCategory(category);
+    const isOwner = currentUser?.id === category.owner?.id;
+    if (isOwner) {
+      setEditingCategory(category);
+    }
   };
 
   const handleDeleteCategory = async () => {
@@ -158,38 +162,52 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
                     {t('categories.title')}
                   </h3>
                   <div className="space-y-2">
-                    {categories?.results.map((c) => (
-                      <div 
-                        key={c.id} 
-                        className={clsx(
-                          "flex items-center justify-between p-3 border rounded-lg transition-colors group",
-                          editingCategory?.id === c.id 
-                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20" 
-                            : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        )}
-                      >
-                        <div className="flex items-center space-x-3 overflow-hidden">
-                          <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
+                    {categories?.results.map((c) => {
+                      const isOwner = currentUser?.id === c.owner?.id;
+                      return (
+                        <div 
+                          key={c.id} 
+                          onClick={() => isOwner && handleEditClick(c)}
+                          className={clsx(
+                            "flex items-center justify-between p-3 border rounded-lg transition-colors group",
+                            isOwner && "cursor-pointer",
+                            editingCategory?.id === c.id 
+                              ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20" 
+                              : (isOwner ? "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50" : "border-gray-100 dark:border-gray-800 opacity-80")
+                          )}
+                        >
+                          <div className="flex items-center space-x-3 overflow-hidden">
+                            <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
+                              {!isOwner && c.owner && (
+                                <span className="text-[10px] text-gray-400 truncate">{c.owner.name || c.owner.username}</span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {isOwner && (
+                              <>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleEditClick(c); }}
+                                  className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-indigo-400 transition-colors rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                                  title={t('common.edit')}
+                                >
+                                  <Edit2 size={18} />
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
+                                  className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+                                  title={t('common.delete')}
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => handleEditClick(c)}
-                            className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-indigo-400 transition-colors rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-                            title={t('common.edit')}
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => setCategoryToDelete(c.id)}
-                            className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
-                            title={t('common.delete')}
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {categories?.results.length === 0 && (
                       <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
                         <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
