@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Category, Task
+from apps.users.serializers import UserSerializer
 
 User = get_user_model()
 
@@ -17,16 +18,17 @@ class CategorySerializer(serializers.ModelSerializer):
 class SharedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'name')
+        fields = ('id', 'email', 'name', 'username')
 
 class TaskSerializer(serializers.ModelSerializer):
     category_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
     shared_with = SharedUserSerializer(many=True, read_only=True)
+    owner = UserSerializer(read_only=True)
     
     class Meta:
         model = Task
         fields = (
-            'id', 'title', 'description', 'is_completed', 'due_date',
+            'id', 'title', 'description', 'is_completed', 'due_date', 'has_time',
             'priority', 'category', 'category_id', 'owner', 'shared_with',
             'created_at', 'updated_at'
         )

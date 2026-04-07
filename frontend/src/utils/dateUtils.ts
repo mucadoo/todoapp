@@ -11,10 +11,14 @@ const getUserLocale = () => {
   return 'en-US';
 };
 
-export const formatDate = (dateString: string, options: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' }) => {
+export const formatDate = (dateString: string, hasTime: boolean = false, options: Intl.DateTimeFormatOptions = {}) => {
   try {
     const date = parseISO(dateString);
-    return new Intl.DateTimeFormat(getUserLocale(), options).format(date);
+    const defaultOptions: Intl.DateTimeFormatOptions = hasTime 
+      ? { dateStyle: 'medium', timeStyle: 'short' }
+      : { dateStyle: 'medium' };
+      
+    return new Intl.DateTimeFormat(getUserLocale(), { ...defaultOptions, ...options }).format(date);
   } catch (error) {
     console.error('Error formatting date:', error);
     return dateString;

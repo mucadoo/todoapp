@@ -16,6 +16,7 @@ export interface Task {
   description: string;
   is_completed: boolean;
   due_date: string | null;
+  has_time: boolean;
   priority: Priority;
   category: Category | null;
   category_id?: string | null; // For sending to backend

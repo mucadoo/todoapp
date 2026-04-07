@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True)),
                 ('is_completed', models.BooleanField(default=False)),
                 ('due_date', models.DateTimeField(blank=True, null=True)),
+                ('has_time', models.BooleanField(default=False)),
                 ('priority', models.CharField(choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], default='medium', max_length=10)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),

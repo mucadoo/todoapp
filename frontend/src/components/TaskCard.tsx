@@ -93,7 +93,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                   "text-xs font-medium",
                   isOverdue ? "text-red-600 dark:text-red-400" : "text-gray-500 dark:text-gray-400"
                 )}>
-                  {t('tasks.dueDate')}: {formatDate(task.due_date, { dateStyle: 'short' })}
+                  {t('tasks.dueDate')}: {formatDate(task.due_date, task.has_time)}
                 </span>
               )}
             </div>

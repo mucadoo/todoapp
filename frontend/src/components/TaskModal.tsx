@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Task, Category } from '../types/tasks';
 import { useCategories } from '../api/queries';
-import { X } from 'lucide-react';
+import { X, Clock } from 'lucide-react';
 
 interface TaskModalProps {
   task?: Task | null;
@@ -14,25 +14,30 @@ interface TaskModalProps {
 
 export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSubmit }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<Partial<Task>>();
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<Partial<Task>>();
   const { categories } = useCategories();
+  const [includeTime, setIncludeTime] = useState(false);
 
   useEffect(() => {
     if (task) {
+      setIncludeTime(task.has_time);
       reset({
         title: task.title,
         description: task.description,
         priority: task.priority,
         category_id: task.category?.id,
-        due_date: task.due_date ? task.due_date.split('T')[0] : '',
+        due_date: task.due_date ? (task.has_time ? task.due_date.substring(0, 16) : task.due_date.split('T')[0]) : '',
+        has_time: task.has_time,
       });
     } else {
+      setIncludeTime(false);
       reset({
         title: '',
         description: '',
         priority: 'medium',
         category_id: undefined,
         due_date: '',
+        has_time: false,
       });
     }
   }, [task, reset, isOpen]);
@@ -45,6 +50,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
       ...data,
       category_id: data.category_id || null,
       due_date: data.due_date || null,
+      has_time: includeTime,
     };
     onSubmit(sanitizedData);
   };
@@ -105,9 +111,22 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.dueDate')}</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('tasks.dueDate')}</label>
+              <button
+                type="button"
+                onClick={() => setIncludeTime(!includeTime)}
+                className={clsx(
+                  "flex items-center space-x-1 text-xs font-medium px-2 py-1 rounded transition-colors",
+                  includeTime ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400" : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                )}
+              >
+                <Clock size={12} />
+                <span>{includeTime ? t('tasks.removeTime') : t('tasks.addTime')}</span>
+              </button>
+            </div>
             <input
-              type="date"
+              type={includeTime ? "datetime-local" : "date"}
               {...register('due_date')}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />

@@ -33,6 +33,7 @@ class Task(models.Model):
     description = models.TextField(blank=True)
     is_completed = models.BooleanField(default=False)
     due_date = models.DateTimeField(null=True, blank=True)
+    has_time = models.BooleanField(default=False)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
     
     category = models.ForeignKey(
