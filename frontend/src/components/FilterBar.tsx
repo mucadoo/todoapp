@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TaskFilters, Priority } from '../types/tasks';
 import { Search, SlidersHorizontal, ChevronUp, ArrowUpDown } from 'lucide-react';
+import { useDebounce } from '../utils/hooks';
 
 interface FilterBarProps {
   filters: TaskFilters;
@@ -12,9 +13,25 @@ interface FilterBarProps {
 export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, count }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState(filters.search || '');
+  const debouncedSearchQuery = useDebounce(localSearchQuery, 500); // Debounce for 500ms
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFilterChange({ search: e.target.value });
+  useEffect(() => {
+    // Update parent filter only when debounced search query changes
+    if (debouncedSearchQuery !== filters.search) {
+      onFilterChange({ search: debouncedSearchQuery || undefined });
+    }
+  }, [debouncedSearchQuery, filters.search, onFilterChange]);
+
+  useEffect(() => {
+    // Keep local state in sync with external filter changes (e.g., clear filters)
+    if (filters.search !== localSearchQuery) {
+      setLocalSearchQuery(filters.search || '');
+    }
+  }, [filters.search]);
+
+  const handleLocalSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearchQuery(e.target.value);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -42,14 +59,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4 transition-colors duration-200">
       <div className="flex items-center space-x-2">
-        <div className="flex-1 relative">
+        <div className="relative flex-grow md:flex-grow-0 md:w-64"> {/* Adjusted width here */}
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
           <input
             type="text"
             placeholder={t('common.search')}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-colors"
-            value={filters.search || ''}
-            onChange={handleSearch}
+            value={localSearchQuery}
+            onChange={handleLocalSearchChange}
           />
         </div>
         <button 
