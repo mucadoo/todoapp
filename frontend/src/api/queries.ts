@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { authApi } from './auth';
 import { tasksApi } from './tasks';
 import { TaskFilters, Task, Category } from '../types/tasks';
+import { useToast } from '../components/Toast';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -47,6 +49,8 @@ export const useAuth = () => {
 
 export const useTasks = (filters: TaskFilters = {}) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
   const {
     data: tasksData,
@@ -78,6 +82,10 @@ export const useTasks = (filters: TaskFilters = {}) => {
     mutationFn: tasksApi.createTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      showToast(t('tasks.createSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('tasks.genericError'), 'error');
     },
   });
 
@@ -85,6 +93,10 @@ export const useTasks = (filters: TaskFilters = {}) => {
     mutationFn: ({ id, task }: { id: string; task: Partial<Task> }) => tasksApi.updateTask(id, task),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      showToast(t('tasks.updateSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('tasks.genericError'), 'error');
     },
   });
 
@@ -92,6 +104,10 @@ export const useTasks = (filters: TaskFilters = {}) => {
     mutationFn: (id: string) => tasksApi.deleteTask(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      showToast(t('tasks.deleteSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('tasks.genericError'), 'error');
     },
   });
 
@@ -119,6 +135,7 @@ export const useTasks = (filters: TaskFilters = {}) => {
     },
     onError: (_err, _id, context) => {
       queryClient.setQueryData(['tasks', filters], context?.previousTasksData);
+      showToast(t('tasks.genericError'), 'error');
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -141,6 +158,8 @@ export const useTasks = (filters: TaskFilters = {}) => {
 
 export const useCategories = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories'],
@@ -151,6 +170,10 @@ export const useCategories = () => {
     mutationFn: tasksApi.createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      showToast(t('categories.createSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('categories.genericError'), 'error');
     },
   });
 
@@ -159,6 +182,10 @@ export const useCategories = () => {
       tasksApi.updateCategory(id, category),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      showToast(t('categories.updateSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('categories.genericError'), 'error');
     },
   });
 
@@ -166,6 +193,10 @@ export const useCategories = () => {
     mutationFn: (id: string) => tasksApi.deleteCategory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      showToast(t('categories.deleteSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('categories.genericError'), 'error');
     },
   });
 
@@ -180,11 +211,17 @@ export const useCategories = () => {
 
 export const useTaskShare = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
   const shareTaskMutation = useMutation({
     mutationFn: ({ id, email }: { id: string; email: string }) => tasksApi.shareTask(id, email),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      showToast(t('tasks.shareSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('tasks.genericError'), 'error');
     },
   });
 

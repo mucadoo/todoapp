@@ -52,13 +52,22 @@
     "medium": "Média",
     "high": "Alta",
     "urgent": "Urgente",
-    "noCategory": "Sem Categoria"
+    "noCategory": "Sem Categoria",
+    "createSuccess": "Tarefa criada com sucesso",
+    "updateSuccess": "Tarefa atualizada com sucesso",
+    "deleteSuccess": "Tarefa excluída com sucesso",
+    "shareSuccess": "Tarefa compartilhada com sucesso",
+    "genericError": "Ocorreu um erro com a tarefa"
   },
   "categories": {
     "title": "Categorias",
     "newCategory": "Nova Categoria",
     "editCategory": "Editar Categoria",
     "name": "Nome da Categoria",
-    "color": "Cor"
+    "color": "Cor",
+    "createSuccess": "Categoria criada com sucesso",
+    "updateSuccess": "Categoria atualizada com sucesso",
+    "deleteSuccess": "Categoria excluída com sucesso",
+    "genericError": "Ocorreu um erro com a categoria"
   }
 }

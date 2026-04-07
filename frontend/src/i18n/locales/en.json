@@ -52,13 +52,22 @@
     "medium": "Medium",
     "high": "High",
     "urgent": "Urgent",
-    "noCategory": "No Category"
+    "noCategory": "No Category",
+    "createSuccess": "Task created successfully",
+    "updateSuccess": "Task updated successfully",
+    "deleteSuccess": "Task deleted successfully",
+    "shareSuccess": "Task shared successfully",
+    "genericError": "An error occurred with the task"
   },
   "categories": {
     "title": "Categories",
     "newCategory": "New Category",
     "editCategory": "Edit Category",
     "name": "Category Name",
-    "color": "Color"
+    "color": "Color",
+    "createSuccess": "Category created successfully",
+    "updateSuccess": "Category updated successfully",
+    "deleteSuccess": "Category deleted successfully",
+    "genericError": "An error occurred with the category"
   }
 }

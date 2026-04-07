@@ -5,6 +5,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { useAuth } from './api/queries';
 import { TopLoadingBar } from './components/TopLoadingBar';
+import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,9 @@ const AppContent = () => {
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TopLoadingBar />
-    <AppContent />
+    <ToastProvider>
+      <TopLoadingBar />
+      <AppContent />
+    </ToastProvider>
   </QueryClientProvider>
 );
