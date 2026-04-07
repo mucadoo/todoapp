@@ -7,6 +7,7 @@ import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
 import { TaskFilters, Task } from '../types/tasks';
 import { Plus, Loader2, Menu } from 'lucide-react';
+import { TaskCardSkeleton } from '../components/Skeleton';
 
 
 export const DashboardPage: React.FC = () => {
@@ -129,7 +130,11 @@ export const DashboardPage: React.FC = () => {
           />
 
           {isLoading ? (
-            <div className="flex justify-center items-center h-64 text-gray-400">Loading tasks...</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <TaskCardSkeleton key={i} />
+              ))}
+            </div>
           ) : tasks?.results.length === 0 ? (
             <div className="bg-white p-12 rounded-lg shadow-sm border text-center text-gray-500">
               <p className="text-lg font-medium">No tasks found.</p>

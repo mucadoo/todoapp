@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { useAuth } from './api/queries';
+import { TopLoadingBar } from './components/TopLoadingBar';
 
 const queryClient = new QueryClient();
 
@@ -11,7 +12,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
   const hasToken = !!localStorage.getItem('access_token');
 
-  if (isLoading && hasToken) return <div>Loading...</div>;
+  if (isLoading && hasToken) return null;
   if (!user && !isLoading) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
@@ -39,6 +40,7 @@ const AppContent = () => {
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
+    <TopLoadingBar />
     <AppContent />
   </QueryClientProvider>
 );

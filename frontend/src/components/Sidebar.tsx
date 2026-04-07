@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
 import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X } from 'lucide-react';
+import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
 
 interface SidebarProps {
@@ -75,7 +76,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="space-y-1">
               {isLoading ? (
-                <p className="px-3 text-sm text-gray-400">Loading...</p>
+                <>
+                  <SidebarItemSkeleton />
+                  <SidebarItemSkeleton />
+                  <SidebarItemSkeleton />
+                </>
               ) : (
                 categories?.results.map((category) => (
                   <button
