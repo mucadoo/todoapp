@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth, useTasks } from '../api/queries';
 import { Sidebar } from '../components/Sidebar';
 import { FilterBar } from '../components/FilterBar';
@@ -6,23 +6,59 @@ import { TaskCard } from '../components/TaskCard';
 import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
 import { TaskFilters, Task } from '../types/tasks';
-import { Plus } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
+
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
-  const [filters, setFilters] = useState<TaskFilters>({ page: 1, page_size: 10 });
-  const { tasks, isLoading, toggleTask, deleteTask, createTask, updateTask } = useTasks(filters);
+  const [filters, setFilters] = useState<TaskFilters>(() => ({ 
+    page: 1, 
+    page_size: 30 
+  }));
+  const { 
+    tasks, 
+    isLoading, 
+    toggleTask, 
+    deleteTask, 
+    createTask, 
+    updateTask,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useTasks(filters);
   
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '200px' // Industry standard for a smooth pre-fetch
+      }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleFilterChange = (newFilters: Partial<TaskFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
   const handleCategorySelect = (categoryId?: string) => {
-    setFilters((prev) => ({ ...prev, category: categoryId, page: 1 }));
+    setFilters((prev) => ({ ...prev, category: categoryId }));
   };
 
   const handleCreateOrUpdateTask = async (data: Partial<Task>) => {
@@ -88,17 +124,31 @@ export const DashboardPage: React.FC = () => {
               <p className="text-sm">Try adjusting your filters or create a new task!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tasks?.results.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggle={toggleTask}
-                  onDelete={deleteTask}
-                  onEdit={openEditTask}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {tasks?.results.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onToggle={toggleTask}
+                    onDelete={deleteTask}
+                    onEdit={openEditTask}
+                  />
+                ))}
+              </div>
+              
+              <div ref={loadMoreRef} className="py-8 flex justify-center">
+                {isFetchingNextPage && (
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <Loader2 className="animate-spin" size={24} />
+                    <span>Loading more...</span>
+                  </div>
+                )}
+                {!hasNextPage && tasks && tasks.results.length > 0 && (
+                  <p className="text-gray-400 text-sm">No more tasks to load.</p>
+                )}
+              </div>
+            </>
           )}
         </main>
       </div>

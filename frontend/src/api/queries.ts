@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { authApi } from './auth';
 import { tasksApi } from './tasks';
 import { TaskFilters, Task, Category } from '../types/tasks';
@@ -48,10 +48,31 @@ export const useAuth = () => {
 export const useTasks = (filters: TaskFilters = {}) => {
   const queryClient = useQueryClient();
 
-  const { data: tasks, isLoading, isError } = useQuery({
+  const {
+    data: tasksData,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['tasks', filters],
-    queryFn: () => tasksApi.getTasks(filters),
+    queryFn: ({ pageParam = 1 }) => tasksApi.getTasks({ ...filters, page: pageParam as number }),
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      const url = new URL(lastPage.next);
+      const page = url.searchParams.get('page');
+      return page ? parseInt(page) : undefined;
+    },
+    initialPageParam: 1,
   });
+
+  const tasks = tasksData ? {
+    count: tasksData.pages[0].count,
+    results: tasksData.pages.flatMap(page => page.results),
+    next: tasksData.pages[tasksData.pages.length - 1].next,
+    previous: tasksData.pages[0].previous,
+  } : undefined;
 
   const createTaskMutation = useMutation({
     mutationFn: tasksApi.createTask,
@@ -79,22 +100,25 @@ export const useTasks = (filters: TaskFilters = {}) => {
     // Optimistic Update
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previousTasks = queryClient.getQueryData(['tasks', filters]);
+      const previousTasksData = queryClient.getQueryData(['tasks', filters]);
 
       queryClient.setQueryData(['tasks', filters], (old: any) => {
         if (!old) return old;
         return {
           ...old,
-          results: old.results.map((task: Task) =>
-            task.id === id ? { ...task, is_completed: !task.is_completed } : task
-          ),
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            results: page.results.map((task: Task) =>
+              task.id === id ? { ...task, is_completed: !task.is_completed } : task
+            ),
+          })),
         };
       });
 
-      return { previousTasks };
+      return { previousTasksData };
     },
     onError: (_err, _id, context) => {
-      queryClient.setQueryData(['tasks', filters], context?.previousTasks);
+      queryClient.setQueryData(['tasks', filters], context?.previousTasksData);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -105,6 +129,9 @@ export const useTasks = (filters: TaskFilters = {}) => {
     tasks,
     isLoading,
     isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     createTask: createTaskMutation.mutateAsync,
     updateTask: updateTaskMutation.mutateAsync,
     deleteTask: deleteTaskMutation.mutateAsync,

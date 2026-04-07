@@ -1,6 +1,6 @@
 import React from 'react';
 import { TaskFilters, Priority } from '../types/tasks';
-import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 
 interface FilterBarProps {
   filters: TaskFilters;
@@ -10,14 +10,13 @@ interface FilterBarProps {
 
 export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, count }) => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFilterChange({ search: e.target.value, page: 1 });
+    onFilterChange({ search: e.target.value });
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onFilterChange({
       is_completed: value === 'all' ? undefined : value === 'completed',
-      page: 1,
     });
   };
 
@@ -25,15 +24,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
     const value = e.target.value;
     onFilterChange({
       priority: value === 'all' ? undefined : (value as Priority),
-      page: 1,
     });
   };
 
   const handleDateChange = (field: 'due_date_after' | 'due_date_before', value: string) => {
-    onFilterChange({ [field]: value || undefined, page: 1 });
+    onFilterChange({ [field]: value || undefined });
   };
-
-  const totalPages = Math.ceil(count / (filters.page_size || 10));
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border space-y-4 md:space-y-0 md:flex md:items-center md:space-x-4">
@@ -91,25 +87,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
           />
         </div>
       </div>
-
-      <div className="flex items-center space-x-2 border-l pl-4 border-gray-200">
-        <button
-          disabled={filters.page === 1}
-          onClick={() => onFilterChange({ page: (filters.page || 1) - 1 })}
-          className="p-1 text-gray-400 hover:text-indigo-600 disabled:opacity-30 disabled:pointer-events-none"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <span className="text-sm text-gray-600 font-medium">
-          {filters.page || 1} / {totalPages || 1}
-        </span>
-        <button
-          disabled={filters.page === totalPages || totalPages === 0}
-          onClick={() => onFilterChange({ page: (filters.page || 1) + 1 })}
-          className="p-1 text-gray-400 hover:text-indigo-600 disabled:opacity-30 disabled:pointer-events-none"
-        >
-          <ChevronRight size={20} />
-        </button>
+      
+      <div className="text-sm text-gray-500 border-l pl-4">
+        {count} tasks
       </div>
     </div>
   );
