@@ -14,7 +14,8 @@
     "profile": "Perfil",
     "darkMode": "Modo Escuro",
     "lightMode": "Modo Claro",
-    "allTasks": "Todas as Tarefas"
+    "allTasks": "Todas as Tarefas",
+    "ordering": "Ordenação"
   },
   "auth": {
     "login": "Entrar",
@@ -61,7 +62,20 @@
     "updateSuccess": "Tarefa atualizada com sucesso",
     "deleteSuccess": "Tarefa excluída com sucesso",
     "shareSuccess": "Tarefa compartilhada com sucesso",
-    "genericError": "Ocorreu um erro com a tarefa"
+    "unshareSuccess": "Compartilhamento removido com sucesso",
+    "share": "Compartilhar",
+    "shared": "Compartilhada",
+    "genericError": "Ocorreu um erro com a tarefa",
+    "sortBy": {
+      "createdAtDesc": "Mais recentes",
+      "createdAtAsc": "Mais antigas",
+      "dueDateAsc": "Data de entrega (próximas)",
+      "dueDateDesc": "Data de entrega (distantes)",
+      "priorityDesc": "Prioridade (maior)",
+      "priorityAsc": "Prioridade (menor)",
+      "titleAsc": "Título (A-Z)",
+      "titleDesc": "Título (Z-A)"
+    }
   },
   "categories": {
     "title": "Categorias",

@@ -14,7 +14,8 @@
     "profile": "Profile",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
-    "allTasks": "All Tasks"
+    "allTasks": "All Tasks",
+    "ordering": "Ordering"
   },
   "auth": {
     "login": "Login",
@@ -61,7 +62,20 @@
     "updateSuccess": "Task updated successfully",
     "deleteSuccess": "Task deleted successfully",
     "shareSuccess": "Task shared successfully",
-    "genericError": "An error occurred with the task"
+    "unshareSuccess": "Task unshared successfully",
+    "share": "Share",
+    "shared": "Shared",
+    "genericError": "An error occurred with the task",
+    "sortBy": {
+      "createdAtDesc": "Newest first",
+      "createdAtAsc": "Oldest first",
+      "dueDateAsc": "Due date (earliest)",
+      "dueDateDesc": "Due date (latest)",
+      "priorityDesc": "Priority (highest)",
+      "priorityAsc": "Priority (lowest)",
+      "titleAsc": "Title (A-Z)",
+      "titleDesc": "Title (Z-A)"
+    }
   },
   "categories": {
     "title": "Categories",

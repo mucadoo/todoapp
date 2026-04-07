@@ -82,6 +82,12 @@ class Command(BaseCommand):
                         'due_date': due_date,
                     }
                 )
+
+                if t_data.get('share_with'):
+                    user_to_share = User.objects.filter(email=t_data['share_with']).first()
+                    if user_to_share:
+                        task.shared_with.add(user_to_share)
+
                 if created:
                     self.stdout.write(f"Created task: {t_data['title']} for {email}")
 

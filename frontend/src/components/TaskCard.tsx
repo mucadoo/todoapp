@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Task } from '../types/tasks';
-import { CheckCircle, Circle, Share2, Trash2, Edit2 } from 'lucide-react';
+import { CheckCircle, Circle, Share2, Trash2, Edit2, XCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useTaskShare } from '../api/queries';
+import { useTaskShare, useAuth } from '../api/queries';
 import { formatDate } from '../utils/dateUtils';
 
 interface TaskCardProps {
@@ -15,9 +15,12 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, onEdit }) => {
   const { t } = useTranslation();
+  const { user: currentUser } = useAuth();
   const [showShareForm, setShowShareForm] = useState(false);
   const [shareEmail, setShareEmail] = useState('');
-  const { shareTask, isSharing } = useTaskShare();
+  const { shareTask, unshareTask, isSharing, isUnsharing } = useTaskShare();
+
+  const isOwner = currentUser?.id === task.owner.id;
 
   const handleShare = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +33,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
     }
   };
 
+  const handleUnshare = async (email: string) => {
+    try {
+      await unshareTask({ id: task.id, email });
+    } catch (error) {
+      console.error('Unsharing failed:', error);
+    }
+  };
+
   const priorityColors = {
     low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -38,9 +49,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
 
   return (
     <div className={clsx(
-      "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200",
+      "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 relative",
       task.is_completed && "opacity-75"
     )}>
+      {!isOwner && (
+        <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider">
+          {t('tasks.shared')}
+        </div>
+      )}
+
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3">
           <button
@@ -80,11 +97,27 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                 </span>
               )}
             </div>
+            
             {task.shared_with.length > 0 && (
-              <div className="flex -space-x-1 mt-3">
+              <div className="flex flex-wrap items-center gap-1.5 mt-3">
                 {task.shared_with.map((u) => (
-                  <div key={u.id} className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white border-2 border-white dark:border-gray-800 ring-1 ring-gray-100 dark:ring-gray-700" title={u.email}>
-                    {u.name[0]}
+                  <div 
+                    key={u.id} 
+                    className="group flex items-center bg-gray-100 dark:bg-gray-700 rounded-full pl-1 pr-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
+                  >
+                    <div className="w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-white mr-1">
+                      {u.name[0]}
+                    </div>
+                    <span className="max-w-[80px] truncate" title={u.email}>{u.name}</span>
+                    {isOwner && (
+                      <button 
+                        onClick={() => handleUnshare(u.email)}
+                        disabled={isUnsharing}
+                        className="ml-1 text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <XCircle size={12} />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -92,9 +125,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
           </div>
         </div>
         <div className="flex space-x-1">
-          <button onClick={() => setShowShareForm(!showShareForm)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400" title="Share">
-            <Share2 size={18} />
-          </button>
+          {isOwner && (
+            <button 
+              onClick={() => setShowShareForm(!showShareForm)} 
+              className={clsx(
+                "p-1 transition-colors",
+                showShareForm ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+              )}
+              title={t('tasks.share')}
+            >
+              <Share2 size={18} />
+            </button>
+          )}
           <button onClick={() => onEdit(task)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400" title={t('common.edit')}>
             <Edit2 size={18} />
           </button>
@@ -104,7 +146,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
         </div>
       </div>
 
-      {showShareForm && (
+      {showShareForm && isOwner && (
         <form onSubmit={handleShare} className="mt-4 flex space-x-2">
           <input
             type="email"
@@ -117,9 +159,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
           <button
             type="submit"
             disabled={isSharing}
-            className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 min-w-[70px]"
           >
-            {isSharing ? '...' : t('common.actions')}
+            {isSharing ? '...' : t('tasks.share')}
           </button>
         </form>
       )}

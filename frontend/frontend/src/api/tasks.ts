@@ -43,12 +43,4 @@ export const tasksApi = {
     const { data } = await api.post<{ is_completed: boolean }>(`/tasks/${id}/toggle/`);
     return data;
   },
-  shareTask: async (id: string, email: string): Promise<{ status: string }> => {
-    const { data } = await api.post<{ status: string }>(`/tasks/${id}/share/`, { email });
-    return data;
-  },
-  unshareTask: async (id: string, email: string): Promise<{ status: string }> => {
-    const { data } = await api.delete<{ status: string }>(`/tasks/${id}/share/`, { data: { email } });
-    return data;
-  },
 };

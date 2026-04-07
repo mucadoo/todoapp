@@ -225,8 +225,21 @@ export const useTaskShare = () => {
     },
   });
 
+  const unshareTaskMutation = useMutation({
+    mutationFn: ({ id, email }: { id: string; email: string }) => tasksApi.unshareTask(id, email),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      showToast(t('tasks.unshareSuccess'), 'success');
+    },
+    onError: () => {
+      showToast(t('tasks.genericError'), 'error');
+    },
+  });
+
   return {
     shareTask: shareTaskMutation.mutateAsync,
+    unshareTask: unshareTaskMutation.mutateAsync,
     isSharing: shareTaskMutation.isPending,
+    isUnsharing: unshareTaskMutation.isPending,
   };
 };

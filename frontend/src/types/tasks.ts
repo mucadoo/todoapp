@@ -25,6 +25,10 @@ export interface Task {
   updated_at: string;
 }
 
+export interface ShareTaskData {
+  email: string;
+}
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -41,4 +45,5 @@ export interface TaskFilters {
   search?: string;
   page?: number;
   page_size?: number;
+  ordering?: string;
 }
