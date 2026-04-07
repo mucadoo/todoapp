@@ -5,7 +5,6 @@ import { Task } from '../types/tasks';
 import { User } from '../types/auth';
 import { useAuth, useTaskShare } from '../api/queries';
 import { useDebounce } from '../utils/hooks';
-import { clsx } from 'clsx';
 
 interface ShareTaskModalProps {
   task: Task;
@@ -138,7 +137,7 @@ export const ShareTaskModal: React.FC<ShareTaskModalProps> = ({ task, isOpen, on
                   >
                     <div className="flex items-center">
                       <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs mr-2">
-                        {user.name ? user.name[0] : user.username[0]}
+                        {user.name ? user.name[0] : (user.username ? user.username[0] : user.email[0])}
                       </div>
                       <span className="text-sm text-gray-900 dark:text-white">{user.name || user.username || user.email}</span>
                     </div>

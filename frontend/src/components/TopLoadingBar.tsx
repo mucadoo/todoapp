@@ -7,7 +7,7 @@ export const TopLoadingBar: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number;
 
     if (isFetching > 0) {
       setIsVisible(true);

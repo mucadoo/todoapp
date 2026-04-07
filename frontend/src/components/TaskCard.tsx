@@ -106,7 +106,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                     className="group flex items-center bg-gray-100 dark:bg-gray-700 rounded-full pl-1 pr-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
                   >
                     <div className="w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-white mr-1">
-                      {u.name ? u.name[0] : u.username[0]}
+                      {u.name ? u.name[0] : (u.username ? u.username[0] : u.email[0])}
                     </div>
                     <span className="max-w-[80px] truncate" title={u.email}>{u.name || u.username}</span>
                     {isOwner && (

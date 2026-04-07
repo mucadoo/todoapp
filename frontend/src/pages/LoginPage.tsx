@@ -8,9 +8,9 @@ import { Sun, Moon, Languages } from 'lucide-react';
 export const LoginPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isDark, toggleDarkMode } = useTheme();
-  const [email, setEmail] = useState('');
+  const [loginIdentifier, setLoginIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [errors, setErrors] = useState<{ loginIdentifier?: string; password?: string; general?: string }>({});
   
   const navigate = useNavigate();
   const { login, isLoggingIn, user } = useAuth();
@@ -27,13 +27,13 @@ export const LoginPage: React.FC = () => {
   }, [user, navigate]);
 
   const validate = () => {
-    const newErrors: { email?: string; password?: string } = {};
+    const newErrors: { loginIdentifier?: string; password?: string } = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!email) {
-      newErrors.email = t('auth.emailRequired');
-    } else if (!emailRegex.test(email)) {
-      newErrors.email = t('auth.invalidEmail');
+    if (!loginIdentifier) {
+      newErrors.loginIdentifier = t('auth.emailOrUsernameRequired');
+    } else if (!emailRegex.test(loginIdentifier) && loginIdentifier.length < 3) { // Assuming username min length is 3
+      newErrors.loginIdentifier = t('auth.invalidEmailOrUsername');
     }
 
     if (!password) {
@@ -51,7 +51,12 @@ export const LoginPage: React.FC = () => {
     if (!validate()) return;
 
     try {
-      await login({ email, password });
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const credentials = emailRegex.test(loginIdentifier)
+        ? { email: loginIdentifier, password }
+        : { username: loginIdentifier, password };
+
+      await login(credentials);
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
@@ -89,15 +94,15 @@ export const LoginPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.email')}</label>
+            <label htmlFor="loginIdentifier" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.emailOrUsername')}</label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="loginIdentifier"
+              type="text"
+              value={loginIdentifier}
+              onChange={(e) => setLoginIdentifier(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
+            {errors.loginIdentifier && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.loginIdentifier}</p>}
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.password')}</label>

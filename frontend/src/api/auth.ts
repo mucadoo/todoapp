@@ -3,7 +3,13 @@ import { LoginCredentials, RegisterCredentials, User, AuthResponse } from '../ty
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const { data } = await api.post<AuthResponse>('/auth/login/', credentials);
+    // If we have an email, we send it, otherwise we send the username.
+    // The backend's LoginSerializer will handle both.
+    const payload = {
+      password: credentials.password,
+      ...(credentials.email ? { email: credentials.email } : { username: credentials.username })
+    };
+    const { data } = await api.post<AuthResponse>('/auth/login/', payload);
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('refresh_token', data.refresh);
     return data;
@@ -19,6 +25,10 @@ export const authApi = {
   updateProfile: async (data: { name: string; email: string }): Promise<User> => {
     const { data: updatedUser } = await api.patch<User>('/auth/me/', data);
     return updatedUser;
+  },
+  updateUsername: async (username: string): Promise<User> => {
+    const { data } = await api.patch<User>('/auth/me/username/', { username });
+    return data;
   },
   searchUsers: async (query: string): Promise<User[]> => {
     const { data } = await api.get<User[]>(`/auth/search/?search=${query}`);

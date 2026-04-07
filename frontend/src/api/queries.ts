@@ -8,6 +8,8 @@ import { User } from '../types/auth';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
   const { data: user, isLoading, isError } = useQuery({
     queryKey: ['me'],
@@ -36,6 +38,18 @@ export const useAuth = () => {
     },
   });
 
+  const updateUsernameMutation = useMutation({
+    mutationFn: authApi.updateUsername,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      showToast(t('profile.usernameUpdateSuccess'), 'success');
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.username?.[0] || t('profile.genericError');
+      showToast(message, 'error');
+    },
+  });
+
   const searchUsersQuery = (searchQuery: string) => useQuery<User[], Error>({
     queryKey: ['users', searchQuery],
     queryFn: () => authApi.searchUsers(searchQuery),
@@ -49,8 +63,10 @@ export const useAuth = () => {
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    updateUsername: updateUsernameMutation.mutateAsync,
     isLoggingIn: loginMutation.isPending,
     isRegistering: registerMutation.isPending,
+    isUpdatingUsername: updateUsernameMutation.isPending,
     searchUsersQuery,
   };
 };

@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  username: string;
   created_at: string;
 }
 
@@ -10,5 +11,10 @@ export interface AuthResponse {
   refresh: string;
 }
 
-export type LoginCredentials = Pick<User, 'email'> & { password: string };
-export type RegisterCredentials = Pick<User, 'email' | 'name'> & { password: string };
+export type LoginCredentials = { 
+  email?: string; 
+  username?: string; 
+  password: string 
+};
+
+export type RegisterCredentials = Pick<User, 'email' | 'name' | 'username'> & { password: string };

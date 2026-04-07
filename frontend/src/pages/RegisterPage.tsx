@@ -10,6 +10,7 @@ export const RegisterPage: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -38,11 +39,18 @@ export const RegisterPage: React.FC = () => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/;
 
     if (!formData.name) {
       newErrors.name = t('auth.nameRequired');
     } else if (formData.name.length < 2) {
       newErrors.name = t('auth.nameTooShort');
+    }
+
+    if (!formData.username) {
+      newErrors.username = t('auth.usernameRequired');
+    } else if (!usernameRegex.test(formData.username)) {
+      newErrors.username = t('auth.invalidUsername');
     }
 
     if (!formData.email) {
@@ -72,6 +80,7 @@ export const RegisterPage: React.FC = () => {
     try {
       await registerUser({
         name: formData.name,
+        username: formData.username,
         email: formData.email,
         password: formData.password,
       });
@@ -122,6 +131,18 @@ export const RegisterPage: React.FC = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
             />
             {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
+          </div>
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.username')}</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
+            />
+            {errors.username && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.username}</p>}
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.email')}</label>
