@@ -2,15 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../api/queries';
+import { useTheme } from '../context/ThemeContext';
+import { Sun, Moon, Languages } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { isDark, toggleDarkMode } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   
   const navigate = useNavigate();
   const { login, isLoggingIn, user } = useAuth();
+
+  const toggleLanguage = () => {
+    const nextLang = i18n.language.startsWith('en') ? 'pt' : 'en';
+    i18n.changeLanguage(nextLang);
+  };
 
   useEffect(() => {
     if (user) {
@@ -52,7 +60,24 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 transition-colors duration-200">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 transition-colors duration-200 relative">
+      <div className="absolute top-4 right-4 flex space-x-2">
+        <button
+          onClick={toggleLanguage}
+          className="p-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          title={i18n.language.startsWith('en') ? 'Português' : 'English'}
+        >
+          <Languages size={20} />
+        </button>
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          title={isDark ? t('common.lightMode') : t('common.darkMode')}
+        >
+          {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
+
       <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md transition-colors duration-200">
         <h2 className="text-2xl font-bold text-center mb-6 dark:text-white">{t('auth.login')}</h2>
         
