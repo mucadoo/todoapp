@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { useAuth } from './api/queries';
 import { TopLoadingBar } from './components/TopLoadingBar';
 import { ToastProvider } from './components/Toast';
+import { ThemeProvider } from './context/ThemeContext';
 
 const queryClient = new QueryClient();
 
@@ -41,9 +42,11 @@ const AppContent = () => {
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ToastProvider>
-      <TopLoadingBar />
-      <AppContent />
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <TopLoadingBar />
+        <AppContent />
+      </ToastProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
 import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X, Languages, Sun, Moon } from 'lucide-react';
-import { useDarkMode } from '../hooks/useDarkMode';
+import { useTheme } from '../context/ThemeContext';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const { categories, isLoading } = useCategories();
-  const { isDark, toggleDarkMode } = useDarkMode();
+  const { isDark, toggleDarkMode } = useTheme();
 
   const toggleLanguage = () => {
     const nextLang = i18n.language.startsWith('en') ? 'pt' : 'en';
