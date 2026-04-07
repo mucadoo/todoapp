@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
-import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User, FilterX } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
@@ -71,11 +71,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => handleCategoryClick(undefined)}
               className={clsx(
                 "flex items-center space-x-3 w-full px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                !currentCategory ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                currentCategory === undefined ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               )}
             >
               <LayoutDashboard size={20} />
               <span>{t('common.allTasks')}</span>
+            </button>
+            <button
+              onClick={() => handleCategoryClick('null')}
+              className={clsx(
+                "flex items-center space-x-3 w-full px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                currentCategory === 'null' ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              )}
+            >
+              <FilterX size={20} />
+              <span>{t('tasks.noCategory')}</span>
             </button>
           </div>
 

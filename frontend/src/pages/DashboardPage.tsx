@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth, useTasks } from '../api/queries';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth, useTasks, useCategories } from '../api/queries';
 import { Sidebar } from '../components/Sidebar';
 import { FilterBar } from '../components/FilterBar';
 import { TaskCard } from '../components/TaskCard';
@@ -8,19 +9,30 @@ import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { TaskFilters, Task } from '../types/tasks';
-import { Plus, Loader2, Menu, CheckCircle2, UserCircle, FolderOpen } from 'lucide-react';
+import { Plus, Loader2, Menu, CheckCircle2, UserCircle, FolderOpen, FilterX } from 'lucide-react';
 import { TaskCardSkeleton } from '../components/Skeleton';
 
 
 export const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const navigate = useNavigate();
+  const { categories } = useCategories();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [filters, setFilters] = useState<TaskFilters>(() => ({ 
     page: 1, 
-    page_size: 30 
+    page_size: 30,
+    category: categoryId
   }));
+
+  // Sync filters with URL param
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, category: categoryId }));
+  }, [categoryId]);
+
   const { 
     tasks, 
     isLoading, 
@@ -63,8 +75,12 @@ export const DashboardPage: React.FC = () => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
-  const handleCategorySelect = (categoryId?: string) => {
-    setFilters((prev) => ({ ...prev, category: categoryId }));
+  const handleCategorySelect = (id?: string) => {
+    if (id) {
+      navigate(`/category/${id}`);
+    } else {
+      navigate('/');
+    }
   };
 
   const handleCreateOrUpdateTask = async (data: Partial<Task>) => {
@@ -84,6 +100,34 @@ export const DashboardPage: React.FC = () => {
   const openEditTask = (task: Task) => {
     setEditingTask(task);
     setIsTaskModalOpen(true);
+  };
+
+  const getHeaderTitle = () => {
+    if (filters.category === 'null') {
+      return (
+        <span className="flex items-center space-x-2">
+          <FilterX size={20} className="text-gray-500 dark:text-gray-400" />
+          <span>{t('tasks.noCategory')}</span>
+        </span>
+      );
+    }
+    
+    if (filters.category) {
+      const currentCat = categories?.results.find(c => c.id === filters.category);
+      return (
+        <span className="flex items-center space-x-2">
+          <FolderOpen size={20} className="text-gray-500 dark:text-gray-400" style={{ color: currentCat?.color }} />
+          <span>{currentCat?.name || t('tasks.category')}</span>
+        </span>
+      );
+    }
+
+    return (
+      <span className="flex items-center space-x-2">
+        <CheckCircle2 size={20} className="text-indigo-600 dark:text-indigo-400" />
+        <span>{t('common.allTasks')}</span>
+      </span>
+    );
   };
 
   return (
@@ -108,17 +152,7 @@ export const DashboardPage: React.FC = () => {
               <Menu size={24} />
             </button>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-none">
-              {filters.category ? (
-                <span className="flex items-center space-x-2">
-                  <FolderOpen size={20} className="text-gray-500 dark:text-gray-400" />
-                  <span>{tasks?.results[0]?.category?.name || t('tasks.category')}</span>
-                </span>
-              ) : (
-                <span className="flex items-center space-x-2">
-                  <CheckCircle2 size={20} className="text-indigo-600 dark:text-indigo-400" />
-                  <span>{t('common.allTasks')}</span>
-                </span>
-              )}
+              {getHeaderTitle()}
             </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
