@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Category, Task
 from .serializers import CategorySerializer, TaskSerializer, ShareTaskSerializer
-from .permissions import IsOwner
+from .permissions import IsOwner, IsTaskOwner
 
 class CategoryListCreateView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
@@ -58,7 +58,7 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Task.objects.filter(Q(owner=self.request.user) | Q(shared_with=self.request.user)).distinct()
 
 class TaskToggleView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsTaskOwner]
     queryset = Task.objects.all()
     lookup_field = 'id'
 
@@ -73,7 +73,7 @@ class TaskToggleView(generics.GenericAPIView):
 
 class TaskShareView(generics.GenericAPIView):
     serializer_class = ShareTaskSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsTaskOwner]
     queryset = Task.objects.all()
     lookup_field = 'id'
 
