@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Task } from '../types/tasks';
 import { CheckCircle, Circle, Share2, Trash2, Edit2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useTaskShare } from '../api/queries';
+import { formatDate } from '../utils/dateUtils';
 
 interface TaskCardProps {
   task: Task;
@@ -12,6 +14,7 @@ interface TaskCardProps {
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, onEdit }) => {
+  const { t } = useTranslation();
   const [showShareForm, setShowShareForm] = useState(false);
   const [shareEmail, setShareEmail] = useState('');
   const { shareTask, isSharing } = useTaskShare();
@@ -69,11 +72,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
                 </span>
               )}
               <span className={clsx("px-2 py-0.5 rounded text-xs font-medium uppercase", priorityColors[task.priority])}>
-                {task.priority}
+                {t(`tasks.${task.priority}`)}
               </span>
               {task.due_date && (
                 <span className="text-xs text-gray-500">
-                  Due: {new Date(task.due_date).toLocaleDateString()}
+                  {t('tasks.dueDate')}: {formatDate(task.due_date, { dateStyle: 'short' })}
                 </span>
               )}
             </div>
@@ -92,10 +95,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
           <button onClick={() => setShowShareForm(!showShareForm)} className="p-1 text-gray-400 hover:text-indigo-600" title="Share">
             <Share2 size={18} />
           </button>
-          <button onClick={() => onEdit(task)} className="p-1 text-gray-400 hover:text-blue-600" title="Edit">
+          <button onClick={() => onEdit(task)} className="p-1 text-gray-400 hover:text-blue-600" title={t('common.edit')}>
             <Edit2 size={18} />
           </button>
-          <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 hover:text-red-600" title="Delete">
+          <button onClick={() => onDelete(task.id)} className="p-1 text-gray-400 hover:text-red-600" title={t('common.delete')}>
             <Trash2 size={18} />
           </button>
         </div>
@@ -105,7 +108,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
         <form onSubmit={handleShare} className="mt-4 flex space-x-2">
           <input
             type="email"
-            placeholder="User's email"
+            placeholder={t('auth.email')}
             required
             className="flex-1 px-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
             value={shareEmail}
@@ -116,7 +119,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onDelete, on
             disabled={isSharing}
             className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
           >
-            Share
+            {isSharing ? '...' : t('common.actions')}
           </button>
         </form>
       )}

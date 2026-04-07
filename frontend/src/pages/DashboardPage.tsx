@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth, useTasks } from '../api/queries';
 import { Sidebar } from '../components/Sidebar';
 import { FilterBar } from '../components/FilterBar';
@@ -11,6 +12,7 @@ import { TaskCardSkeleton } from '../components/Skeleton';
 
 
 export const DashboardPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filters, setFilters] = useState<TaskFilters>(() => ({ 
@@ -103,7 +105,7 @@ export const DashboardPage: React.FC = () => {
               <Menu size={24} />
             </button>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate max-w-[150px] sm:max-w-none">
-              {filters.category ? 'Category Tasks' : 'All Tasks'}
+              {filters.category ? t('tasks.category') : t('tasks.title')}
             </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
@@ -116,8 +118,8 @@ export const DashboardPage: React.FC = () => {
               className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
             >
               <Plus size={18} />
-              <span className="hidden xs:inline">New Task</span>
-              <span className="xs:hidden">New</span>
+              <span className="hidden xs:inline">{t('tasks.newTask')}</span>
+              <span className="xs:hidden">{t('common.create')}</span>
             </button>
           </div>
         </header>
@@ -158,11 +160,11 @@ export const DashboardPage: React.FC = () => {
                 {isFetchingNextPage && (
                   <div className="flex items-center space-x-2 text-gray-500">
                     <Loader2 className="animate-spin" size={24} />
-                    <span>Loading more...</span>
+                    <span>{t('common.loading')}</span>
                   </div>
                 )}
                 {!hasNextPage && tasks && tasks.results.length > 0 && (
-                  <p className="text-gray-400 text-sm">No more tasks to load.</p>
+                  <p className="text-gray-400 text-sm">{t('common.noMoreTasks')}</p>
                 )}
               </div>
             </>

@@ -1,8 +1,9 @@
 import React from 'react';
 import { useCategories } from '../api/queries';
-import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, LogOut, PlusCircle, X, Languages } from 'lucide-react';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   currentCategory?: string;
@@ -21,7 +22,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { t, i18n } = useTranslation();
   const { categories, isLoading } = useCategories();
+
+  const toggleLanguage = () => {
+    const nextLang = i18n.language.startsWith('en') ? 'pt' : 'en';
+    i18n.changeLanguage(nextLang);
+  };
 
   const sidebarClasses = clsx(
     "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:pt-16",
@@ -61,16 +68,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
               )}
             >
               <LayoutDashboard size={20} />
-              <span>All Tasks</span>
+              <span>{t('tasks.title')}</span>
             </button>
           </div>
 
           <div>
             <div className="flex items-center justify-between px-3 mb-2">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Categories
+                {t('categories.title')}
               </h3>
-              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600" title="Add category">
+              <button onClick={onAddCategory} className="text-gray-400 hover:text-indigo-600" title={t('categories.newCategory')}>
                 <PlusCircle size={16} />
               </button>
             </div>
@@ -100,13 +107,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 space-y-2">
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <Languages size={20} />
+            <span>{i18n.language.startsWith('en') ? 'Português' : 'English'}</span>
+          </button>
           <button
             onClick={onLogout}
             className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
             <LogOut size={20} />
-            <span>Logout</span>
+            <span>{t('common.logout')}</span>
           </button>
         </div>
       </aside>

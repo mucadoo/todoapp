@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Task, Category } from '../types/tasks';
 import { useCategories } from '../api/queries';
@@ -12,6 +13,7 @@ interface TaskModalProps {
 }
 
 export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSubmit }) => {
+  const { t } = useTranslation();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Partial<Task>>();
   const { categories } = useCategories();
 
@@ -51,24 +53,24 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
-          <h2 className="text-xl font-bold">{task ? 'Edit Task' : 'New Task'}</h2>
+          <h2 className="text-xl font-bold">{task ? t('tasks.editTask') : t('tasks.newTask')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
           </button>
         </div>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Title</label>
+            <label className="block text-sm font-medium text-gray-700">{t('tasks.taskTitle')}</label>
             <input
               type="text"
-              {...register('title', { required: 'Title is required' })}
+              {...register('title', { required: true })}
               className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
+            {errors.title && <p className="mt-1 text-sm text-red-600">Title is required</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <label className="block text-sm font-medium text-gray-700">{t('tasks.description')}</label>
             <textarea
               {...register('description')}
               rows={3}
@@ -78,23 +80,23 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Priority</label>
+              <label className="block text-sm font-medium text-gray-700">{t('tasks.priority')}</label>
               <select
                 {...register('priority')}
                 className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="low">{t('tasks.low')}</option>
+                <option value="medium">{t('tasks.medium')}</option>
+                <option value="high">{t('tasks.high')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <label className="block text-sm font-medium text-gray-700">{t('tasks.category')}</label>
               <select
                 {...register('category_id')}
                 className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               >
-                <option value="">None</option>
+                <option value="">{t('common.all')}</option>
                 {categories?.results.map((c: Category) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -103,7 +105,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Due Date</label>
+            <label className="block text-sm font-medium text-gray-700">{t('tasks.dueDate')}</label>
             <input
               type="date"
               {...register('due_date')}
@@ -117,13 +119,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
               onClick={onClose}
               className="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
             >
-              {task ? 'Update' : 'Create'}
+              {task ? t('common.save') : t('common.create')}
             </button>
           </div>
         </form>

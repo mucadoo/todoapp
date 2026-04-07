@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../api/queries';
 
 export const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
@@ -21,15 +23,15 @@ export const LoginPage: React.FC = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('auth.emailRequired');
     } else if (!emailRegex.test(email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = t('auth.invalidEmail');
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth.passwordRequired');
     } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = t('auth.passwordTooShort');
     }
 
     setErrors(newErrors);
@@ -45,14 +47,14 @@ export const LoginPage: React.FC = () => {
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
-      setErrors({ general: 'Invalid email or password' });
+      setErrors({ general: t('auth.invalidCredentials') });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">{t('auth.login')}</h2>
         
         {errors.general && (
           <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 text-sm rounded">
@@ -62,7 +64,7 @@ export const LoginPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">{t('auth.email')}</label>
             <input
               id="email"
               type="email"
@@ -73,7 +75,7 @@ export const LoginPage: React.FC = () => {
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">{t('auth.password')}</label>
             <input
               id="password"
               type="password"
@@ -88,13 +90,13 @@ export const LoginPage: React.FC = () => {
             disabled={isLoggingIn}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
-            {isLoggingIn ? 'Logging in...' : 'Login'}
+            {isLoggingIn ? t('common.loading') : t('auth.login')}
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          {t('auth.noAccount')}{' '}
           <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Register
+            {t('auth.register')}
           </Link>
         </p>
       </div>
