@@ -24,8 +24,10 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 class TaskFilter(filters.FilterSet):
-    due_date_before = filters.DateTimeFilter(field_name="due_date", lookup_expr='lte')
-    due_date_after = filters.DateTimeFilter(field_name="due_date", lookup_expr='gte')
+    # Using DateFilter instead of DateTimeFilter handles the "same day" filtering 
+    # correctly by treating input as a full day range.
+    due_date_before = filters.DateFilter(field_name="due_date", lookup_expr='lte')
+    due_date_after = filters.DateFilter(field_name="due_date", lookup_expr='gte')
 
     class Meta:
         model = Task
