@@ -33,7 +33,18 @@ graph LR
    ```bash
    docker-compose up --build
    ```
-4. Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8000`.
+4. (Optional) Seed the database with initial data:
+   ```bash
+   docker-compose run --rm backend python manage.py seed_db
+   ```
+   *Alternatively, you can start the app with seeding enabled by setting an environment variable:*
+   ```bash
+   SEED_DB=true docker-compose up --build
+   ```
+5. Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8000`.
+   *If you seeded the database, you can log in with:*
+   - **Email**: `dev@example.com`
+   - **Password**: `password123`
 
 ### Local Development (without Docker)
 

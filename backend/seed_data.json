@@ -1,0 +1,92 @@
+{
+  "users": [
+    {
+      "email": "dev@example.com",
+      "name": "Dev User",
+      "password": "password123",
+      "is_staff": true,
+      "is_superuser": true,
+      "categories": [
+        { "name": "Work", "color": "#FF5733" },
+        { "name": "Personal", "color": "#33FF57" },
+        { "name": "Urgent", "color": "#FF3333" },
+        { "name": "Shopping", "color": "#3357FF" },
+        { "name": "Health", "color": "#FF33F6" },
+        { "name": "Education", "color": "#33FFF6" }
+      ],
+      "tasks": [
+        { "title": "Complete project documentation", "description": "Write and review the final documentation for the TODO app.", "priority": "high", "category": "Work", "due_days": 2 },
+        { "title": "Buy groceries", "description": "Milk, eggs, bread, and fruits.", "priority": "medium", "category": "Shopping", "due_days": 1 },
+        { "title": "Gym workout", "description": "Leg day today!", "priority": "low", "category": "Health", "due_hours": 5 },
+        { "title": "Fix critical bug", "description": "The auth loop is back, need to investigate.", "priority": "high", "category": "Urgent", "due_hours": 2 },
+        { "title": "Read a book", "description": "Continue reading \"Clean Code\".", "priority": "low", "category": "Education", "due_days": null },
+        { "title": "Morning run", "description": "30 minutes run in the park.", "priority": "medium", "category": "Health", "due_hours": 1 },
+        { "title": "Weekly meeting", "description": "Sync with the team about project progress.", "priority": "high", "category": "Work", "due_days": 3 },
+        { "title": "Cook dinner", "description": "Prepare healthy meal for tonight.", "priority": "medium", "category": "Personal", "due_hours": 6 },
+        { "title": "Learn React", "description": "Go through React Hooks documentation.", "priority": "high", "category": "Education", "due_days": 5 },
+        { "title": "Pay rent", "description": "Monthly rent payment due soon.", "priority": "high", "category": "Urgent", "due_days": 0 },
+        { "title": "Clean apartment", "description": "Vacuum and mop the floors.", "priority": "low", "category": "Personal", "due_days": 4 },
+        { "title": "Doctor appointment", "description": "Regular health checkup.", "priority": "medium", "category": "Health", "due_days": 7 },
+        { "title": "Write blog post", "description": "New post about Django REST framework.", "priority": "medium", "category": "Work", "due_days": 10 },
+        { "title": "Buy new shoes", "description": "Running shoes are worn out.", "priority": "low", "category": "Shopping", "due_days": 14 },
+        { "title": "Finalize budget", "description": "Review expenses and set monthly budget.", "priority": "high", "category": "Work", "due_days": 1 },
+        { "title": "Meditation", "description": "15 minutes of mindfulness.", "priority": "low", "category": "Personal", "due_hours": 0 },
+        { "title": "Update resume", "description": "Keep achievements up to date.", "priority": "medium", "category": "Work", "due_days": 30 },
+        { "title": "Language lesson", "description": "Practice Spanish on Duolingo.", "priority": "low", "category": "Education", "due_hours": 3 },
+        { "title": "Call parents", "description": "Check in and say hello.", "priority": "medium", "category": "Personal", "due_days": 1 },
+        { "title": "Car maintenance", "description": "Oil change and tire rotation.", "priority": "medium", "category": "Personal", "due_days": 12 },
+        { "title": "Finish online course", "description": "Complete the last module of the Python course.", "priority": "high", "category": "Education", "due_days": 20 },
+        { "title": "Plan weekend trip", "description": "Look for hotels and attractions.", "priority": "low", "category": "Personal", "due_days": 3 },
+        { "title": "Buy gift for friend", "description": "Birthday is coming up next week.", "priority": "medium", "category": "Shopping", "due_days": 5 },
+        { "title": "Review PRs", "description": "Check and merge team's pull requests.", "priority": "high", "category": "Work", "due_hours": 4 },
+        { "title": "Organize desk", "description": "Clear out old papers and clutter.", "priority": "low", "category": "Work", "due_days": 6 },
+        { "title": "Yoga session", "description": "1-hour vinyasa flow.", "priority": "medium", "category": "Health", "due_days": 2 },
+        { "title": "Pay utility bills", "description": "Electricity and water bills.", "priority": "high", "category": "Urgent", "due_days": 3 },
+        { "title": "Take out trash", "description": "Don't forget the recycling.", "priority": "low", "category": "Personal", "due_hours": 1 },
+        { "title": "Dentist checkup", "description": "Annual dental cleaning.", "priority": "medium", "category": "Health", "due_days": 15 },
+        { "title": "Draft email to client", "description": "Follow up on the latest project update.", "priority": "high", "category": "Work", "due_days": 0 }
+      ]
+    },
+    {
+      "email": "tester@example.com",
+      "name": "QA Tester",
+      "password": "password123",
+      "is_staff": false,
+      "is_superuser": false,
+      "categories": [
+        { "name": "Bug Reports", "color": "#E74C3C" },
+        { "name": "Feature Testing", "color": "#2ECC71" },
+        { "name": "Automation", "color": "#3498DB" },
+        { "name": "Documentation", "color": "#9B59B6" },
+        { "name": "Meetings", "color": "#F1C40F" }
+      ],
+      "tasks": [
+        { "title": "Test login flow", "description": "Verify that login works with valid and invalid credentials.", "priority": "high", "category": "Bug Reports", "due_hours": 1 },
+        { "title": "Write automation script for tasks", "description": "Use Playwright to automate task creation testing.", "priority": "medium", "category": "Automation", "due_days": 3 },
+        { "title": "Verify dark mode UI", "description": "Check if all components render correctly in dark mode.", "priority": "low", "category": "Feature Testing", "due_days": 5 },
+        { "title": "Regression test on categories", "description": "Ensure category deletion doesn't break task association.", "priority": "high", "category": "Bug Reports", "due_hours": 4 },
+        { "title": "Update test plan", "description": "Add new test cases for sharing features.", "priority": "medium", "category": "Documentation", "due_days": 2 },
+        { "title": "Sprint planning", "description": "Discuss next week tasks with the dev team.", "priority": "high", "category": "Meetings", "due_days": 1 },
+        { "title": "Test password reset", "description": "Check the email link and token expiration.", "priority": "medium", "category": "Bug Reports", "due_days": 2 },
+        { "title": "Performance audit", "description": "Analyze frontend bundle size and load times.", "priority": "low", "category": "Automation", "due_days": 10 },
+        { "title": "Cross-browser testing", "description": "Check Safari and Edge compatibility.", "priority": "medium", "category": "Feature Testing", "due_days": 7 },
+        { "title": "Document API endpoints", "description": "Update Swagger/OpenAPI docs for new tasks API.", "priority": "low", "category": "Documentation", "due_days": 15 },
+        { "title": "Daily standup", "description": "Quick sync with the team.", "priority": "low", "category": "Meetings", "due_hours": 0 },
+        { "title": "Verify file upload", "description": "Test profile picture upload with various formats.", "priority": "medium", "category": "Feature Testing", "due_days": 4 },
+        { "title": "Fix flaky tests", "description": "Investigate why E2E tests fail intermittently on CI.", "priority": "high", "category": "Automation", "due_days": 1 },
+        { "title": "User interview", "description": "Collect feedback on the new dashboard layout.", "priority": "medium", "category": "Meetings", "due_days": 8 },
+        { "title": "Security scan", "description": "Run dependency-check and audit logs.", "priority": "high", "category": "Automation", "due_days": 6 },
+        { "title": "Accessibility audit", "description": "Check screen reader support and color contrast.", "priority": "medium", "category": "Feature Testing", "due_days": 12 },
+        { "title": "Weekly sync", "description": "Review progress with the manager.", "priority": "low", "category": "Meetings", "due_days": 5 },
+        { "title": "Clean up test database", "description": "Remove stale records from the QA environment.", "priority": "low", "category": "Automation", "due_days": 20 },
+        { "title": "Validate error messages", "description": "Ensure all forms provide clear feedback on failure.", "priority": "medium", "category": "Bug Reports", "due_hours": 8 },
+        { "title": "Proofread release notes", "description": "Check for typos in the upcoming version log.", "priority": "low", "category": "Documentation", "due_days": 1 },
+        { "title": "Test notification system", "description": "Verify emails are sent for due dates.", "priority": "high", "category": "Feature Testing", "due_days": 2 },
+        { "title": "Load testing", "description": "Simulate 100 concurrent users on the API.", "priority": "medium", "category": "Automation", "due_days": 14 },
+        { "title": "Write unit tests for Utils", "description": "Cover date formatting and string manipulation.", "priority": "low", "category": "Automation", "due_days": 3 },
+        { "title": "Check mobile responsiveness", "description": "Test dashboard on iPhone and Android devices.", "priority": "medium", "category": "Feature Testing", "due_days": 6 },
+        { "title": "Review security headers", "description": "Ensure CSP and HSTS are correctly set.", "priority": "high", "category": "Automation", "due_days": 0 }
+      ]
+    }
+  ]
+}
