@@ -35,12 +35,10 @@ class Command(BaseCommand):
 
         for user_data in users_list:
             email = user_data.get('email', 'dev@example.com')
-            # Derive username from email if not provided to avoid IntegrityError
-            username = user_data.get('username', email.split('@')[0])
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={
-                    'username': username,
+                    'username': user_data.get('username', email.split('@')[0]),
                     'name': user_data.get('name', 'Dev User'),
                     'is_staff': user_data.get('is_staff', True),
                     'is_superuser': user_data.get('is_superuser', True),

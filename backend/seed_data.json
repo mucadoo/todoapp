@@ -2,6 +2,7 @@
   "users": [
     {
       "email": "dev@example.com",
+      "username": "dev",
       "name": "Dev User",
       "password": "password123",
       "is_staff": true,
@@ -51,6 +52,7 @@
     },
     {
       "email": "tester@example.com",
+      "username": "tester",
       "name": "QA Tester",
       "password": "password123",
       "is_staff": false,
