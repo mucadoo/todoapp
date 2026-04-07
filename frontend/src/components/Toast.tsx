@@ -48,7 +48,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 w-full max-w-sm pointer-events-none">
+      <div className="fixed bottom-4 right-4 z-[10000] flex flex-col gap-2 w-full max-w-sm pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
@@ -56,9 +56,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
               clsx(
                 'pointer-events-auto flex items-center gap-3 p-4 rounded-lg shadow-lg border animate-in slide-in-from-right-full duration-300',
                 {
-                  'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/30 dark:border-green-800 dark:text-green-300': toast.type === 'success',
-                  'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-800 dark:text-red-300': toast.type === 'error',
-                  'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300': toast.type === 'info',
+                  'bg-white dark:bg-gray-800 border-green-200 text-green-800 dark:border-green-800 dark:text-green-300': toast.type === 'success',
+                  'bg-white dark:bg-gray-800 border-red-200 text-red-800 dark:border-red-800 dark:text-red-300': toast.type === 'error',
+                  'bg-white dark:bg-gray-800 border-blue-200 text-blue-800 dark:border-blue-800 dark:text-blue-300': toast.type === 'info',
                 }
               )
             )}
@@ -71,7 +71,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
             <p className="text-sm font-medium">{toast.message}</p>
             <button
               onClick={() => removeToast(toast.id)}
-              className="ml-auto flex-shrink-0 p-1 hover:bg-black/5 rounded-full transition-colors"
+              className="ml-auto flex-shrink-0 p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
