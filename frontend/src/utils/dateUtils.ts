@@ -1,4 +1,4 @@
-import { parseISO, isBefore, endOfDay, startOfToday } from 'date-fns';
+import { parseISO, isBefore, endOfDay } from 'date-fns';
 
 /**
  * Gets the user's browser locale.
