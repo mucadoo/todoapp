@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { Category } from '../types/tasks';
-import { X, Trash2, Plus, Edit2 } from 'lucide-react';
+import { X, Trash2, Plus, Edit2, Users } from 'lucide-react';
 import { useCategories, useAuth } from '../api/queries';
 import { clsx } from 'clsx';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -19,6 +19,14 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<Partial<Category>>();
+
+  const { ownedCategories, sharedCategories } = useMemo(() => {
+    if (!categories?.results) return { ownedCategories: [], sharedCategories: [] };
+    return {
+      ownedCategories: categories.results.filter(c => !c.is_shared),
+      sharedCategories: categories.results.filter(c => c.is_shared)
+    };
+  }, [categories]);
 
   useEffect(() => {
     if (editingCategory) {
@@ -53,10 +61,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
   };
 
   const handleEditClick = (category: Category) => {
-    const isOwner = currentUser?.id === category.owner?.id;
-    if (isOwner) {
-      setEditingCategory(category);
-    }
+    setEditingCategory(category);
   };
 
   const handleDeleteCategory = async () => {
@@ -74,6 +79,50 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
     setEditingCategory(null);
     reset({ name: '', color: '#6366f1' });
   };
+
+  const renderCategoryRow = (c: Category, isOwner: boolean) => (
+    <div 
+      key={c.id} 
+      onClick={() => isOwner && handleEditClick(c)}
+      className={clsx(
+        "flex items-center justify-between p-3 border rounded-lg transition-colors group",
+        isOwner && "cursor-pointer",
+        editingCategory?.id === c.id 
+          ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20" 
+          : (isOwner ? "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50" : "border-gray-100 dark:border-gray-800 opacity-80")
+      )}
+    >
+      <div className="flex items-center space-x-3 overflow-hidden">
+        <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
+        <div className="flex flex-col min-w-0">
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
+          {!isOwner && c.owner && (
+            <span className="text-[10px] text-gray-400 truncate">{c.owner.name || c.owner.username}</span>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {isOwner && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleEditClick(c); }}
+              className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-indigo-400 transition-colors rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+              title={t('common.edit')}
+            >
+              <Edit2 size={18} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
+              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+              title={t('common.edit')}
+            >
+              <Trash2 size={18} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -157,64 +206,35 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose })
                 </section>
 
                 {/* Category List */}
-                <section className="space-y-4">
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    {t('categories.title')}
-                  </h3>
-                  <div className="space-y-2">
-                    {categories?.results.map((c) => {
-                      const isOwner = currentUser?.id === c.owner?.id;
-                      return (
-                        <div 
-                          key={c.id} 
-                          onClick={() => isOwner && handleEditClick(c)}
-                          className={clsx(
-                            "flex items-center justify-between p-3 border rounded-lg transition-colors group",
-                            isOwner && "cursor-pointer",
-                            editingCategory?.id === c.id 
-                              ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20" 
-                              : (isOwner ? "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50" : "border-gray-100 dark:border-gray-800 opacity-80")
-                          )}
-                        >
-                          <div className="flex items-center space-x-3 overflow-hidden">
-                            <div className="w-4 h-4 rounded-full shadow-sm shrink-0" style={{ backgroundColor: c.color }} />
-                            <div className="flex flex-col min-w-0">
-                              <span className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{c.name}</span>
-                              {!isOwner && c.owner && (
-                                <span className="text-[10px] text-gray-400 truncate">{c.owner.name || c.owner.username}</span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {isOwner && (
-                              <>
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); handleEditClick(c); }}
-                                  className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-indigo-400 transition-colors rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-                                  title={t('common.edit')}
-                                >
-                                  <Edit2 size={18} />
-                                </button>
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setCategoryToDelete(c.id); }}
-                                  className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
-                                  title={t('common.delete')}
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              </>
-                            )}
-                          </div>
+                <div className="space-y-6">
+                  {/* Owned Categories */}
+                  <section className="space-y-4">
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      {t('categories.title')}
+                    </h3>
+                    <div className="space-y-2">
+                      {ownedCategories.map(c => renderCategoryRow(c, true))}
+                      {ownedCategories.length === 0 && (
+                        <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+                          <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
                         </div>
-                      );
-                    })}
-                    {categories?.results.length === 0 && (
-                      <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
-                        <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
+                      )}
+                    </div>
+                  </section>
+
+                  {/* Shared Categories */}
+                  {sharedCategories.length > 0 && (
+                    <section className="space-y-4">
+                      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <Users size={12} />
+                        {t('categories.shared')}
+                      </h3>
+                      <div className="space-y-2">
+                        {sharedCategories.map(c => renderCategoryRow(c, false))}
                       </div>
-                    )}
-                  </div>
-                </section>
+                    </section>
+                  )}
+                </div>
               </div>
             </div>
           </div>
