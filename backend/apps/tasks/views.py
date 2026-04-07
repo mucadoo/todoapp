@@ -13,16 +13,9 @@ class CategoryListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # Categories owned by the user
-        owned_categories = Category.objects.filter(owner=user)
-        
-        # Categories associated with tasks shared with the user
-        shared_task_categories = Category.objects.filter(
-            tasks__shared_with=user
-        ).distinct()
-        
-        # Combine and return unique categories
-        return (owned_categories | shared_task_categories).distinct().order_by('-created_at')
+        return Category.objects.filter(
+            Q(owner=user) | Q(tasks__shared_with=user)
+        ).distinct().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
