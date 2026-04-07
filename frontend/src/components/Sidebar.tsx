@@ -33,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarClasses = clsx(
-    "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:pt-16",
+    "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-full",
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
@@ -53,15 +53,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <aside className={sidebarClasses}>
-        <div className="flex items-center justify-between px-4 py-4 lg:hidden">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menu</h2>
-          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <div className="flex items-center justify-between px-4 py-4 shrink-0 lg:h-16 lg:border-b lg:border-gray-200 lg:dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('tasks.title')}</h2>
+          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 lg:hidden">
             <X size={24} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-          <div>
+          <div className="lg:hidden">
             <button
               onClick={() => handleCategoryClick(undefined)}
               className={clsx(
@@ -71,6 +71,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <LayoutDashboard size={20} />
               <span>{t('tasks.title')}</span>
+            </button>
+          </div>
+
+          <div className="hidden lg:block">
+            <button
+              onClick={() => handleCategoryClick(undefined)}
+              className={clsx(
+                "flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                !currentCategory ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              )}
+            >
+              <LayoutDashboard size={20} />
+              <span>{t('common.allTasks')}</span>
             </button>
           </div>
 

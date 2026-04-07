@@ -85,7 +85,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col lg:flex-row transition-colors duration-200">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex flex-col lg:flex-row transition-colors duration-200 overflow-hidden">
       <Sidebar
         currentCategory={filters.category}
         onCategorySelect={handleCategorySelect}
@@ -95,7 +95,7 @@ export const DashboardPage: React.FC = () => {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20 transition-colors duration-200">
           <div className="flex items-center space-x-3">
             <button 

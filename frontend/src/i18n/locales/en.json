@@ -13,7 +13,8 @@
     "logout": "Logout",
     "profile": "Profile",
     "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
+    "lightMode": "Light Mode",
+    "allTasks": "All Tasks"
   },
   "auth": {
     "login": "Login",

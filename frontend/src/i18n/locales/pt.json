@@ -13,7 +13,8 @@
     "logout": "Sair",
     "profile": "Perfil",
     "darkMode": "Modo Escuro",
-    "lightMode": "Modo Claro"
+    "lightMode": "Modo Claro",
+    "allTasks": "Todas as Tarefas"
   },
   "auth": {
     "login": "Entrar",
