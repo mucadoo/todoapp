@@ -34,7 +34,8 @@
     "passwordTooShort": "A senha deve ter pelo menos 8 caracteres",
     "nameRequired": "Nome é obrigatório",
     "nameTooShort": "O nome deve ter pelo menos 2 caracteres",
-    "passwordsDoNotMatch": "As senhas não coincidem"
+    "passwordsDoNotMatch": "As senhas não coincidem",
+    "confirmPassword": "Confirmar Senha"
   },
   "tasks": {
     "title": "Tarefas",

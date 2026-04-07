@@ -34,7 +34,8 @@
     "passwordTooShort": "Password must be at least 8 characters",
     "nameRequired": "Name is required",
     "nameTooShort": "Name must be at least 2 characters",
-    "passwordsDoNotMatch": "Passwords do not match"
+    "passwordsDoNotMatch": "Passwords do not match",
+    "confirmPassword": "Confirm Password"
   },
   "tasks": {
     "title": "Tasks",
