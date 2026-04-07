@@ -139,33 +139,36 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
                   onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                   className="flex items-center justify-between w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                 >
-                  <span className="flex items-center gap-2 truncate">
+                  <span className="flex items-center gap-2 truncate text-sm sm:text-base">
                     {selectedCategory ? (
                       <>
                         <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: selectedCategory.color }} />
                         <span className="truncate">{selectedCategory.name}</span>
                       </>
                     ) : (
-                      <span className="text-gray-500 dark:text-gray-400">{t('common.all')}</span>
+                      <span className="text-gray-500 dark:text-gray-400">{t('tasks.noCategory')}</span>
                     )}
                   </span>
-                  <ChevronDown size={18} className={clsx("text-gray-400 transition-transform", isCategoryOpen && "rotate-180")} />
+                  <ChevronDown size={18} className={clsx("text-gray-400 transition-transform flex-shrink-0 ml-1", isCategoryOpen && "rotate-180")} />
                 </button>
 
                 {isCategoryOpen && (
-                  <div className="absolute z-50 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200 origin-top">
-                    <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50 flex items-center px-3 gap-2">
-                      <Search size={16} className="text-gray-400" />
+                  <div className="absolute z-[60] mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 origin-top">
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center px-3 gap-2 sticky top-0">
+                      <Search size={14} className="text-gray-400" />
                       <input
                         type="text"
-                        className="bg-transparent border-none focus:ring-0 text-sm w-full py-1 dark:text-white"
-                        placeholder="Search categories..."
+                        className="bg-transparent border-none focus:ring-0 text-xs w-full py-1 dark:text-white p-0 outline-none"
+                        placeholder="Search..."
                         autoFocus
                         value={categorySearch}
                         onChange={(e) => setCategorySearch(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') setIsCategoryOpen(false);
+                        }}
                       />
                     </div>
-                    <div className="max-h-60 overflow-y-auto p-1">
+                    <div className="max-h-40 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700">
                       <button
                         type="button"
                         onClick={() => {
@@ -175,11 +178,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
                         }}
                         className={clsx(
                           "flex items-center justify-between w-full px-3 py-2 text-sm rounded-md transition-colors",
-                          !categoryId ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          !categoryId ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                         )}
                       >
-                        <span>{t('common.all')}</span>
-                        {!categoryId && <Check size={16} />}
+                        <span>{t('tasks.noCategory')}</span>
+                        {!categoryId && <Check size={14} />}
                       </button>
                       {filteredCategories.map((c) => (
                         <button
@@ -192,19 +195,19 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
                           }}
                           className={clsx(
                             "flex items-center justify-between w-full px-3 py-2 text-sm rounded-md transition-colors",
-                            categoryId === c.id ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            categoryId === c.id ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                           )}
                         >
                           <div className="flex items-center gap-2 truncate">
                             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
                             <span className="truncate">{c.name}</span>
                           </div>
-                          {categoryId === c.id && <Check size={16} />}
+                          {categoryId === c.id && <Check size={14} />}
                         </button>
                       ))}
                       {filteredCategories.length === 0 && categorySearch && (
                         <div className="px-3 py-4 text-center text-xs text-gray-500 dark:text-gray-400 italic">
-                          No results for "{categorySearch}"
+                          No results
                         </div>
                       )}
                     </div>
@@ -235,6 +238,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
               className="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
             />
           </div>
+
+          {/* Spacer to handle dropdown overflow in the scrollable form */}
+          {isCategoryOpen && <div className="h-32 sm:hidden" />}
 
           <div className="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-gray-100 dark:border-gray-700 mt-2">
             <button

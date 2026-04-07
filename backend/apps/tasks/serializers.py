@@ -47,18 +47,11 @@ class TaskSerializer(serializers.ModelSerializer):
     def validate_category_id(self, value):
         if value:
             try:
-                # Allow selecting categories the user owns OR categories of tasks shared with them
-                # Actually, when CREATING/UPDATING a task, they should probably only use their own categories?
-                # The prompt says "show categories that belong to tasks shared with me".
-                # If they are editing a task shared WITH them, they might want to change its category?
-                # Usually, only the owner can change category, but let's see.
-                category = Category.objects.filter(
-                    Q(owner=self.context['request'].user) | 
-                    Q(tasks__shared_with=self.context['request'].user)
-                ).filter(id=value).distinct().get()
+                # Strictly only allow categories owned by the user
+                category = Category.objects.get(id=value, owner=self.context['request'].user)
                 return category
             except Category.DoesNotExist:
-                raise serializers.ValidationError("Category does not exist or does not belong to the user.")
+                raise serializers.ValidationError("Category does not exist or does not belong to you.")
         return None
 
     def create(self, validated_data):
