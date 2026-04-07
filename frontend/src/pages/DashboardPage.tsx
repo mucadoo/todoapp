@@ -6,15 +6,18 @@ import { FilterBar } from '../components/FilterBar';
 import { TaskCard } from '../components/TaskCard';
 import { TaskModal } from '../components/TaskModal';
 import { CategoryModal } from '../components/CategoryModal';
+import { ProfileModal } from '../components/ProfileModal';
 import { TaskFilters, Task } from '../types/tasks';
-import { Plus, Loader2, Menu } from 'lucide-react';
+import { Plus, Loader2, Menu, CheckCircle2, UserCircle } from 'lucide-react';
 import { TaskCardSkeleton } from '../components/Skeleton';
+import { clsx } from 'clsx';
 
 
 export const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [filters, setFilters] = useState<TaskFilters>(() => ({ 
     page: 1, 
     page_size: 30 
@@ -91,12 +94,13 @@ export const DashboardPage: React.FC = () => {
         onCategorySelect={handleCategorySelect}
         onLogout={() => logout()}
         onAddCategory={() => setIsCategoryModalOpen(true)}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
 
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20 transition-colors duration-200">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-20 transition-colors duration-200">
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -105,11 +109,27 @@ export const DashboardPage: React.FC = () => {
               <Menu size={24} />
             </button>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-none">
-              {filters.category ? t('tasks.category') : t('tasks.title')}
+              {filters.category ? (
+                <span className="flex items-center space-x-2">
+                  <FolderOpen size={20} className="text-gray-500 dark:text-gray-400" />
+                  <span>{tasks?.results[0]?.category?.name || t('tasks.category')}</span>
+                </span>
+              ) : (
+                <span className="flex items-center space-x-2">
+                  <CheckCircle2 size={20} className="text-indigo-600 dark:text-indigo-400" />
+                  <span>{t('common.allTasks')}</span>
+                </span>
+              )}
             </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">Hi, {user?.name}</span>
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors hidden sm:block"
+              title={t('auth.profile')}
+            >
+              <UserCircle size={24} />
+            </button>
             <button
               onClick={() => {
                 setEditingTask(null);
@@ -185,6 +205,11 @@ export const DashboardPage: React.FC = () => {
       <CategoryModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
+      />
+
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </div>
   );

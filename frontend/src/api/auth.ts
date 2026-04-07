@@ -16,6 +16,10 @@ export const authApi = {
     const { data } = await api.get<User>('/auth/me/');
     return data;
   },
+  updateProfile: async (data: { name: string; email: string }): Promise<User> => {
+    const { data: updatedUser } = await api.patch<User>('/auth/me/', data);
+    return updatedUser;
+  },
   searchUsers: async (query: string): Promise<User[]> => {
     const { data } = await api.get<User[]>(`/auth/search/?search=${query}`);
     return data;
