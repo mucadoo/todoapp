@@ -54,7 +54,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     mutationFn: (data: { name: string; email: string }) => authApi.updateProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
-      showToast(t('auth.profileUpdateSuccess'), 'success');
     },
     onError: () => {
       showToast(t('auth.profileUpdateError'), 'error');
@@ -65,7 +64,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     mutationFn: (newUsername: string) => authApi.updateUsername(newUsername),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
-      showToast(t('auth.usernameUpdateSuccess'), 'success');
     },
     onError: (error: any) => {
       const message = error.response?.data?.username?.[0] || t('auth.usernameUpdateError');
@@ -199,6 +197,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     if (promises.length > 0) {
       try {
         await Promise.all(promises);
+        showToast(t('auth.profileUpdateSuccess'), 'success');
         onClose();
       } catch (error) { }
     } else {
