@@ -51,7 +51,8 @@
     "usernameUpdateSuccess": "Username updated successfully",
     "usernameUpdateError": "Failed to update username",
     "usernameTaken": "This username is already taken",
-    "usernameTooShort": "Username must be at least 3 characters"
+    "usernameTooShort": "Username must be at least 3 characters",
+    "emailTaken": "This email is already in use"
   },
   "tasks": {
     "title": "Tasks",

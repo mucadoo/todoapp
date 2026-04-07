@@ -19,6 +19,8 @@ export const RegisterPage: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isUsernameTaken, setIsUsernameTaken] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [isEmailTaken, setIsEmailTaken] = useState(false);
   
   const navigate = useNavigate();
   const { register: registerUser, isRegistering, user } = useAuth();
@@ -38,7 +40,7 @@ export const RegisterPage: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Clear username error when user starts typing
+    // Clear errors when user starts typing
     if (name === 'username') {
       setIsUsernameTaken(false);
       setErrors(prev => {
@@ -47,10 +49,19 @@ export const RegisterPage: React.FC = () => {
         return newErrors;
       });
     }
+
+    if (name === 'email') {
+      setIsEmailTaken(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.email;
+        return newErrors;
+      });
+    }
   };
 
   const checkUsernameAvailability = async () => {
-    if (!formData.username || formData.username.length < 3) return; // Only check if length is valid
+    if (!formData.username || formData.username.length < 3) return;
 
     setIsCheckingUsername(true);
     try {
@@ -66,10 +77,28 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
+  const checkEmailAvailability = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) return;
+
+    setIsCheckingEmail(true);
+    try {
+      const { exists } = await authApi.checkEmail(formData.email);
+      setIsEmailTaken(exists);
+      if (exists) {
+        setErrors(prev => ({ ...prev, email: t('auth.emailTaken') }));
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/; // Regex already enforces min length 3
+    const usernameRegex = /^[a-zA-Z0-9_]{3,150}$/;
 
     if (!formData.name) {
       newErrors.name = t('auth.nameRequired');
@@ -79,7 +108,7 @@ export const RegisterPage: React.FC = () => {
 
     if (!formData.username) {
       newErrors.username = t('auth.usernameRequired');
-    } else if (formData.username.length < 3) { // Explicit check for min length
+    } else if (formData.username.length < 3) {
       newErrors.username = t('auth.usernameTooShort');
     } else if (!usernameRegex.test(formData.username)) {
       newErrors.username = t('auth.invalidUsername');
@@ -91,6 +120,8 @@ export const RegisterPage: React.FC = () => {
       newErrors.email = t('auth.emailRequired');
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = t('auth.invalidEmail');
+    } else if (isEmailTaken) {
+      newErrors.email = t('auth.emailTaken');
     }
 
     if (!formData.password) {
@@ -109,7 +140,7 @@ export const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate() || isCheckingUsername || isUsernameTaken) return;
+    if (!validate() || isCheckingUsername || isUsernameTaken || isCheckingEmail || isEmailTaken) return;
 
     try {
       await registerUser({
@@ -188,14 +219,22 @@ export const RegisterPage: React.FC = () => {
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.email')}</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
-            />
+            <div className="relative">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                onBlur={checkEmailAvailability}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
+              />
+              {isCheckingEmail && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <Loader2 size={16} className="animate-spin text-gray-400" />
+                </div>
+              )}
+            </div>
             {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
           </div>
           <div>
@@ -226,7 +265,7 @@ export const RegisterPage: React.FC = () => {
           </div>
           <button
             type="submit"
-            disabled={isRegistering || isCheckingUsername || isUsernameTaken}
+            disabled={isRegistering || isCheckingUsername || isUsernameTaken || isCheckingEmail || isEmailTaken}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
             {isRegistering ? t('common.loading') : t('auth.register')}
