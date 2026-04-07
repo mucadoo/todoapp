@@ -239,7 +239,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               }`}
           >
             <User size={16} />
-            <span>{t('auth.name')}</span>
+            <span>{t('auth.account')}</span>
           </button>
           <button
             onClick={() => setActiveTab('security')}
@@ -249,7 +249,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               }`}
           >
             <ShieldCheck size={16} />
-            <span>{t('auth.changePassword')}</span>
+            <span>{t('auth.security')}</span>
           </button>
         </div>
 
