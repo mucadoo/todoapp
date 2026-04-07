@@ -5,8 +5,6 @@
       "username": "dev",
       "name": "Dev User",
       "password": "password123",
-      "is_staff": true,
-      "is_superuser": true,
       "categories": [
         { "name": "Work", "color": "#FF5733" },
         { "name": "Personal", "color": "#33FF57" },
@@ -55,8 +53,6 @@
       "username": "tester",
       "name": "QA Tester",
       "password": "password123",
-      "is_staff": false,
-      "is_superuser": false,
       "categories": [
         { "name": "Bug Reports", "color": "#E74C3C" },
         { "name": "Feature Testing", "color": "#2ECC71" },

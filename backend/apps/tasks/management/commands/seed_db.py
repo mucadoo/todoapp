@@ -40,8 +40,6 @@ class Command(BaseCommand):
                 defaults={
                     'username': user_data.get('username', email.split('@')[0]),
                     'name': user_data.get('name', 'Dev User'),
-                    'is_staff': user_data.get('is_staff', True),
-                    'is_superuser': user_data.get('is_superuser', True),
                 }
             )
             if created:
