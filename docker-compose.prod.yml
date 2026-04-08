@@ -5,6 +5,8 @@ services:
     image: postgres:16-alpine
     container_name: todoapp_db_prod
     restart: unless-stopped
+    networks:
+      - todoapp_prod_network
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
     environment:
@@ -21,6 +23,8 @@ services:
     image: ${GHCR_BACKEND_IMAGE:-ghcr.io/mucadoo/todoapp/todoapp-backend:latest}
     container_name: backend
     restart: unless-stopped
+    networks:
+      - todoapp_prod_network
     depends_on:
       db:
         condition: service_healthy
@@ -29,7 +33,7 @@ services:
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY}
       ALLOWED_HOSTS: "*"
-      CORS_ALLOWED_ORIGINS: "http://${ALLOWED_HOSTS},http://18.117.222.176"
+      CORS_ALLOWED_ORIGINS: "http://18.117.222.176,http://${ALLOWED_HOSTS}"
     expose:
       - "8000"
     command: >
@@ -42,15 +46,15 @@ services:
     image: ${GHCR_FRONTEND_IMAGE:-ghcr.io/mucadoo/todoapp/todoapp-frontend:latest}
     container_name: frontend
     restart: unless-stopped
+    networks:
+      - todoapp_prod_network
     depends_on:
       - backend
     ports:
       - "80:80"
 
-# Important: Explicit network so frontend can reach backend by name
 networks:
-  default:
-    name: todoapp_prod_network
+  todoapp_prod_network:
     driver: bridge
 
 volumes:
