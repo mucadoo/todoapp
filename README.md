@@ -1,139 +1,230 @@
-# TodoApp — Aplicação Full-Stack Python/React
+# TodoApp
 
-Uma aplicação web de lista de tarefas com qualidade de produção, apresentando recursos avançados como compartilhamento de tarefas, categorias e estatísticas públicas.
+> Aplicação web full-stack de gerenciamento de tarefas com autenticação JWT, compartilhamento entre usuários, categorias, API pública e deploy automatizado na AWS.
 
-**URL de Produção:** [http://18.117.222.176/](http://18.117.222.176/)
+**🌐 Produção:** http://18.117.222.176
 
-## 1. Visão Geral da Arquitetura
+---
 
-```mermaid
-graph LR
-    User[Usuário/Navegador] <--> Nginx[Nginx Reverse Proxy]
-    Nginx <--> Frontend[React 18 / Vite / Static Assets]
-    Nginx <--> Backend[Django 5 / DRF / Gunicorn]
-    Backend <--> DB[(PostgreSQL 16)]
-    ThirdParty[Integração de Terceiros] --> Backend
-```
+## Índice
 
-- **Infrastrutura de Produção**: 
-  - **Nginx**: Atua como proxy reverso, servindo os arquivos estáticos do React e encaminhando requisições `/api/` para o backend.
-  - **Gunicorn**: Servidor WSGI de produção para a aplicação Django.
-  - **Docker Compose**: Orquestração de containers (Frontend, Backend, Banco de Dados) em rede isolada.
-- **Backend**: Python 3.12, Django 5, Django REST Framework, SimpleJWT (Autenticação), PostgreSQL, drf-spectacular (OpenAPI).
-- **Frontend**: React 18, TypeScript, Axios, React Query, Tailwind CSS, Lucide Icons, React Hook Form, i18next (Internacionalização).
-- **Testes**: Pytest (Backend), Selenium + Pytest (Frontend E2E).
-- **CI/CD**: GitHub Actions com deploy automatizado para AWS EC2.
+1. [Visão Geral](#1-visão-geral)
+2. [Funcionalidades](#2-funcionalidades)
+3. [Arquitetura](#3-arquitetura)
+4. [Stack](#4-stack)
+5. [Rodando Localmente](#5-rodando-localmente)
+6. [Variáveis de Ambiente](#6-variáveis-de-ambiente)
+7. [Testes](#7-testes)
+8. [API](#8-api)
+9. [CI/CD](#9-cicd)
+10. [Deploy AWS EC2](#10-deploy-aws-ec2)
+11. [Decisões de Design](#11-decisões-de-design)
+
+---
+
+## 1. Visão Geral
+
+TodoApp é uma aplicação de lista de tarefas com qualidade de produção, construída com Django REST Framework no backend e React 18 no frontend. O projeto atende a todos os requisitos do teste prático da Bravi, incluindo o ponto extra de deploy em nuvem (AWS EC2).
+
+Credenciais de acesso pré-cadastradas para avaliação:
+
+| Usuário | E-mail | Senha |
+|---|---|---|
+| Desenvolvedor | dev@example.com | password123 |
+| Tester | tester@example.com | password123 |
+| Gerente | manager@example.com | password123 |
+
+---
 
 ## 2. Funcionalidades
 
-- **Autenticação**: Login e registro seguros baseados em JWT.
-- **Gerenciamento de Tarefas**: Criar, atualizar, excluir e alternar status das tarefas com **paginação infinite scroll**.
-- **Categorias**: Organize tarefas com categorias personalizadas.
-- **Compartilhamento de Tarefas**: Compartilhe tarefas com outros usuários do sistema.
-- **Perfil do Usuário**: Atualize informações de perfil, mude o nome de usuário e a senha.
-- **Busca**: Pesquise outros usuários para compartilhar tarefas.
-- **Internacionalização (i18n)**: Suporte para Inglês e Português.
-- **Suporte a Temas**: Opções de modo claro e escuro.
-- **Documentação da API**: Swagger UI e ReDoc interativos.
-- **Design Responsivo**: Construído com Tailwind CSS para dispositivos móveis e desktop.
+- **Autenticação** — registro, login e refresh via JWT (access + refresh tokens)
+- **Tarefas** — CRUD completo com infinite scroll, toggle de conclusão e atualização otimista
+- **Categorias** — criação e gerenciamento de categorias por usuário
+- **Compartilhamento** — compartilhe tarefas com outros usuários por e-mail
+- **Filtros** — por status, prioridade, categoria, intervalo de datas e busca por texto
+- **Perfil** — atualização de nome, e-mail e senha
+- **API Pública** — endpoint de estatísticas globais sem autenticação (`/api/external/stats/`)
+- **Documentação da API** — Swagger UI e ReDoc gerados automaticamente via drf-spectacular
+- **Internacionalização** — suporte a Português e Inglês com detecção automática pelo navegador
+- **Temas** — modo claro e escuro
+- **Design responsivo** — mobile e desktop via Tailwind CSS
 
-## 3. Pré-requisitos
+---
 
-- Docker e Docker Compose
-- Node.js 18+ (para desenvolvimento local)
-- Python 3.12 (para desenvolvimento local)
+## 3. Arquitetura
 
-## 4. Como Executar Localmente
+```mermaid
+graph LR
+    User[Usuário / Navegador] <--> Nginx[Nginx :80]
+    Nginx -- /api/* --> Backend[Django 5 + Gunicorn]
+    Nginx -- /* --> Frontend[React 18 + Vite - Assets Estáticos]
+    Backend <--> DB[(PostgreSQL 16)]
+    External[Cliente Externo] -- GET /api/external/stats/ --> Backend
+```
 
-### Usando Docker (Recomendado)
+O Nginx atua como ponto de entrada único na porta 80, roteando:
+- requisições `/api/*` para o backend Django via Gunicorn
+- todo o restante para os assets estáticos do React
 
-1. Clone o repositório.
-2. Execute o seguinte comando:
-   ```bash
-   docker-compose up --build
-   ```
-   > **Nota**: Ao usar o `docker-compose.yml` padrão para desenvolvimento, **não é necessário configurar variáveis de ambiente manuais**, pois o arquivo já contém valores padrão seguros para o ambiente local.
-3. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
-   - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
-   - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
-   - **Login Padrão (Semeado automaticamente)**:
-     - **Desenvolvedor**: `dev@example.com` / `password123`
-     - **Tester**: `tester@example.com` / `password123`
-     - **Gerente**: `manager@example.com` / `password123`
-4. (Opcional) Semeie o banco de dados manualmente se necessário:
-   ```bash
-   docker-compose run --rm backend python manage.py seed_db
-   ```
+Toda a orquestração é feita via Docker Compose em rede isolada.
 
-### Desenvolvimento Local (sem Docker)
+---
 
-Para desenvolvimento local sem Docker, você precisará configurar as variáveis de ambiente em um arquivo `.env` baseado no `.env.example`.
+## 4. Stack
+
+| Camada | Tecnologias |
+|---|---|
+| Backend | Python 3.12, Django 5, Django REST Framework, SimpleJWT, drf-spectacular, PostgreSQL 16 |
+| Frontend | React 18, TypeScript, Vite, Axios, React Query, React Hook Form, Tailwind CSS, i18next |
+| Testes | pytest, pytest-django, pytest-cov, Selenium, webdriver-manager |
+| Infra | Docker, Docker Compose, Nginx, Gunicorn, GitHub Actions, AWS EC2 |
+
+---
+
+## 5. Rodando Localmente
+
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+
+### Com Docker (recomendado)
+
+```bash
+git clone https://github.com/[seu-usuario]/todoapp.git
+cd todoapp
+docker-compose up --build
+```
+
+O banco é migrado e semeado automaticamente na primeira execução. Nenhuma configuração manual de `.env` é necessária para o ambiente de desenvolvimento — o `docker-compose.yml` já inclui valores padrão seguros.
+
+| Serviço | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/api/docs/swagger-ui/ |
+| ReDoc | http://localhost:8000/api/docs/redoc/ |
+
+Para popular o banco manualmente:
+
+```bash
+docker-compose run --rm backend python manage.py seed_db
+```
+
+### Sem Docker (desenvolvimento local)
 
 **Backend:**
+
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+cp .env.example .env      # edite conforme necessário
 python manage.py migrate
 python manage.py runserver
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## 5. Como Executar os Testes
+---
 
-### Testes de Backend
+## 6. Variáveis de Ambiente
+
+Copie `.env.example` para `.env` e ajuste os valores para desenvolvimento local sem Docker:
+
+```env
+# Django
+SECRET_KEY=your-very-long-random-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1,backend
+
+# Banco de dados
+DATABASE_URL=postgres://todo_user:todo_password@db:5432/todoapp
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+```
+
+Para gerar um `SECRET_KEY` seguro:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+> ⚠️ Nunca suba o arquivo `.env` com credenciais reais para o repositório. O `.gitignore` já o exclui por padrão.
+
+---
+
+## 7. Testes
+
+### Backend (pytest)
+
 ```bash
 cd backend
 pytest --cov=apps
 ```
 
-### Testes de Frontend E2E (Selenium)
+A cobertura mínima exigida no CI é **80%**.
 
-Os testes de ponta a ponta podem ser executados de duas maneiras:
+### Frontend E2E (Selenium)
 
-#### A. Dentro do Docker (Headless)
-Os testes rodam automaticamente no container `backend` usando Chromium em modo headless.
+**A. Dentro do Docker (headless — mesmo ambiente do CI):**
+
 ```bash
 docker exec todoapp_backend pytest /app/frontend_tests/test_e2e.py
 ```
 
-#### B. Usando Ambiente Local (WSL/Desktop)
-Para rodar os testes usando um navegador instalado no seu sistema (Chrome, Edge, Brave, etc.):
+**B. Com navegador local (WSL / Desktop):**
 
-1. Instale as dependências:
-   ```bash
-   pip install selenium webdriver-manager pytest pytest-django
-   ```
-2. Configure as variáveis de ambiente (opcional):
-   - `CHROME_BINARY_PATH`: Caminho para o executável do seu navegador.
-   - `CHROME_HEADLESS`: Defina como `false` para visualizar a execução do navegador.
-3. Execute o pytest:
-   ```bash
-   pytest frontend/tests/test_e2e.py -m e2e
-   ```
+```bash
+pip install selenium webdriver-manager pytest pytest-django
 
-## 6. Documentação da API
+# Opcional: aponte para um navegador específico
+export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
 
-O projeto utiliza `drf-spectacular` para gerar esquemas OpenAPI 3.0. Com o backend em execução, você pode acessar a documentação interativa em:
+# Opcional: desative headless para ver o navegador na tela
+export CHROME_HEADLESS=false
 
-- **Swagger UI**: /api/docs/swagger-ui
-- **ReDoc**: /api/docs/redoc
-- **Esquema (YAML)**: /api/schema
+pytest frontend/tests/test_e2e.py -m e2e
+```
 
-## 7. Estatísticas Públicas (API Aberta)
+Os testes E2E seguem o padrão **Page Object Model (POM)** para melhor manutenção e legibilidade.
 
-O sistema expõe um endpoint público para consumo de estatísticas globais, sem necessidade de autenticação.
+---
 
-**Endpoint:** `GET /api/external/stats/`
+## 8. API
 
-**Exemplo de Resposta:**
+### Documentação interativa
+
+| Interface | URL (local) |
+|---|---|
+| Swagger UI | http://localhost:8000/api/docs/swagger-ui/ |
+| ReDoc | http://localhost:8000/api/docs/redoc/ |
+| Schema YAML | http://localhost:8000/api/schema/ |
+
+### Endpoint público — estatísticas globais
+
+Não requer autenticação. Ideal para integração com sistemas externos.
+
+```
+GET /api/external/stats/
+```
+
+**Exemplo:**
+
+```bash
+curl http://18.117.222.176/api/external/stats/
+```
+
+**Resposta:**
+
 ```json
 {
   "total_tasks": 100,
@@ -146,50 +237,95 @@ O sistema expõe um endpoint público para consumo de estatísticas globais, sem
 }
 ```
 
-## 8. Variáveis de Ambiente (`.env.example`)
+### Principais endpoints autenticados
 
-```env
-SECRET_KEY=your-secret-key
-DEBUG=True
-DATABASE_URL=postgres://todo_user:todo_password@db:5432/todoapp
-ALLOWED_HOSTS=localhost,127.0.0.1,backend
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | /api/auth/register/ | Criar conta |
+| POST | /api/auth/login/ | Login (retorna JWT) |
+| POST | /api/auth/refresh/ | Renovar access token |
+| GET | /api/auth/me/ | Perfil do usuário autenticado |
+| GET/POST | /api/tasks/ | Listar e criar tarefas |
+| GET/PUT/PATCH/DELETE | /api/tasks/{id}/ | Detalhe, edição e exclusão |
+| POST | /api/tasks/{id}/toggle/ | Alternar conclusão |
+| POST | /api/tasks/{id}/share/ | Compartilhar com outro usuário |
+| GET/POST | /api/categories/ | Listar e criar categorias |
+| GET | /api/external/stats/ | Estatísticas públicas |
+
+---
+
+## 9. CI/CD
+
+O pipeline no GitHub Actions (`.github/workflows/ci.yml`) é disparado em todo push e PR para `main`:
+
+```
+push / PR → main
+    │
+    ├── lint         ruff + black (Python) · eslint + prettier (React)
+    ├── test-backend pytest com cobertura mínima de 80%
+    ├── test-e2e     Selenium headless via Docker Compose
+    ├── build        Docker multi-stage → push para GHCR
+    └── deploy       SSH → EC2 → docker compose pull + up (somente push em main)
 ```
 
-## 9. Pipeline CI/CD
+---
 
-O pipeline do GitHub Actions (`.github/workflows/ci.yml`) é acionado em cada push e PR para a branch `main`:
+## 10. Deploy AWS EC2
 
-1. **Linting**: Verifica o estilo de código Python (ruff/black) e React (eslint/prettier).
-2. **Testes de Backend**: Executa pytest com cobertura (deve ser > 80%).
-3. **Testes de Frontend**: Executa testes Selenium E2E em um ambiente Docker Compose.
-4. **Build & Push**: Constrói imagens Docker e as envia para o GHCR (somente em `push` para `main`).
-5. **Deploy**: Implanta automaticamente a versão mais recente no AWS EC2 ao realizar o push para `main`.
-
-## 10. Implantação (AWS EC2)
-
-A aplicação está disponível em: [http://18.117.222.176/](http://18.117.222.176/)
+A aplicação está em produção em: **http://18.117.222.176**
 
 ### Infraestrutura
-- **AWS EC2**: Instância t2.micro rodando Ubuntu.
-- **Nginx**: Configurado como servidor web e proxy reverso dentro do container frontend.
-- **Segurança**: Grupo de segurança permitindo portas 22 (SSH) e 80 (HTTP).
 
-### Segredos do GitHub para Configurar
-Defina estes segredos no seu repositório GitHub (Configurações > Segredos e variáveis > Actions):
-- `EC2_USER`: O nome de usuário SSH (ex: `ubuntu`).
-- `EC2_SSH_KEY`: O conteúdo da sua chave SSH privada.
-- `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY`: Credenciais para deploy via CloudFormation/CLI.
-- `POSTGRES_PASSWORD`: Senha de produção para o banco de dados.
-- `SECRET_KEY`: Chave secreta de produção do Django.
+- **EC2 t2.micro** — Ubuntu, região us-east-1
+- **Nginx** — proxy reverso + serving de assets estáticos na porta 80
+- **Docker Compose** — orquestração de todos os serviços no servidor
+- **GHCR** — imagens Docker armazenadas no GitHub Container Registry
+
+### Segredos necessários no GitHub
+
+Configure em *Settings → Secrets and variables → Actions*:
+
+| Secret | Descrição |
+|---|---|
+| `EC2_HOST` | IP público da instância EC2 |
+| `EC2_USER` | Usuário SSH (ex: `ubuntu`) |
+| `EC2_SSH_KEY` | Conteúdo da chave SSH privada (.pem) |
+| `POSTGRES_PASSWORD` | Senha de produção do banco de dados |
+| `SECRET_KEY` | Chave secreta de produção do Django |
+| `AWS_ACCESS_KEY_ID` | Credencial AWS (se usar CLI/CloudFormation) |
+| `AWS_SECRET_ACCESS_KEY` | Credencial AWS (se usar CLI/CloudFormation) |
+
+### Setup inicial da instância (uma vez)
+
+```bash
+# Na instância EC2
+sudo apt update && sudo apt install -y docker.io docker-compose-plugin
+sudo usermod -aG docker ubuntu
+# Faça logout e login novamente para aplicar o grupo
+```
+
+---
 
 ## 11. Decisões de Design
 
-- **Nginx como Proxy**: Utilizado para unificar o acesso ao frontend e backend sob a mesma porta (80), facilitando a configuração de CORS e roteamento.
-- **Infinite Scrolling**: Implementado no frontend usando `useInfiniteQuery` do React Query para uma experiência de navegação fluida em vez de paginação tradicional por números de página.
-- **Autenticação JWT**: Utilizada para autenticação sem estado, com `SimpleJWT` fornecendo a lógica de tokens de acesso e renovação.
-- **UUID PKs**: Utilizados em todos os modelos (Usuário, Categoria, Tarefa) para segurança e melhor escalabilidade em sistemas distribuídos.
-- **React Query**: Escolhido para um gerenciamento poderoso do estado do servidor, cache e atualizações otimistas para alternar a conclusão de tarefas.
-- **Internacionalização (i18n)**: Implementada usando `i18next` e `react-i18next` com detecção de idioma do navegador.
-- **Page Object Model (POM)**: Aplicado nos testes Selenium para melhor manutenção e legibilidade.
-- **Docker de Múltiplos Estágios (Multi-stage Builds)**: Otimizado para desempenho e segurança em imagens de produção.
+**UUID como chave primária** — todos os modelos (User, Task, Category) usam UUID em vez de inteiros sequenciais, evitando enumeração de recursos e facilitando escalabilidade em sistemas distribuídos.
+
+**JWT com SimpleJWT** — autenticação stateless com tokens de acesso de curta duração e refresh token de longa duração, eliminando a necessidade de sessões no servidor.
+
+**Infinite scroll com `useInfiniteQuery`** — preferido à paginação por números de página para uma experiência de navegação mais fluida, especialmente em dispositivos móveis.
+
+**Nginx como ponto de entrada único** — unifica frontend e backend sob a mesma porta (80), elimina problemas de CORS em produção e serve assets estáticos com alta eficiência.
+
+**React Query para estado do servidor** — gerenciamento de cache, refetch automático e atualizações otimistas (toggle de conclusão de tarefa acontece instantaneamente na UI antes da confirmação do servidor).
+
+**Multi-stage Docker builds** — imagens de produção significativamente menores e mais seguras, separando o ambiente de build do runtime.
+
+**Page Object Model nos testes Selenium** — seletores e ações encapsulados por página, tornando os testes legíveis e fáceis de manter quando a UI muda.
+
+**Split settings (base / dev / prod)** — configurações de ambiente separadas evitam que valores de desenvolvimento vaze para produção acidentalmente.
+
+**i18n com i18next** — detecção automática do idioma do navegador com fallback para português, sem necessidade de configuração manual pelo usuário.
+
+---
+
+*Desenvolvido como teste prático para a vaga de Desenvolvedor Python na Bravi.*
