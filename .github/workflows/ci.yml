@@ -112,7 +112,7 @@ jobs:
           fi
 
           # Run Selenium tests
-          pip install selenium webdriver-manager pytest
+          pip install selenium==4.21.0 webdriver-manager pytest
           export PYTHONPATH=$PYTHONPATH:$(pwd)/frontend/tests
           pytest frontend/tests/test_e2e.py
           docker-compose down
