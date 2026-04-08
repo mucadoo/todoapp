@@ -73,7 +73,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onS
   };
 
   const filteredCategories = categories?.results.filter(c => 
-    c.name.toLowerCase().includes(categorySearch.toLowerCase())
+    !c.is_shared && c.name.toLowerCase().includes(categorySearch.toLowerCase())
   ) || [];
 
   const selectedCategory = categories?.results.find(c => c.id === categoryId);
