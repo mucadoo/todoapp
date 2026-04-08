@@ -127,15 +127,11 @@ O projeto utiliza `drf-spectacular` para gerar esquemas OpenAPI 3.0. Com o backe
 - **ReDoc**: [http://localhost:8000/api/docs/redoc/](http://localhost:8000/api/docs/redoc/)
 - **Esquema (YAML)**: [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/)
 
-## 7. Documentação da API Externa
+## 7. Estatísticas Públicas (API Aberta)
+
+O sistema expõe um endpoint público para consumo de estatísticas globais, sem necessidade de autenticação.
 
 **Endpoint:** `GET /api/external/stats/`
-Retorna estatísticas agregadas globais. Nenhuma autenticação é necessária.
-
-**Exemplo de Requisição:**
-```bash
-curl http://localhost:8000/api/external/stats/
-```
 
 **Exemplo de Resposta:**
 ```json
