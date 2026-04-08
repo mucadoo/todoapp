@@ -50,8 +50,9 @@ graph LR
    - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
    - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
    - **Login Padrão (Semeado automaticamente)**:
-     - **E-mail**: `dev@example.com`
-     - **Senha**: `password123`
+     - **Desenvolvedor**: `dev@example.com` / `password123`
+     - **Tester**: `tester@example.com` / `password123`
+     - **Gerente**: `manager@example.com` / `password123`
 5. (Opcional) Semeie o banco de dados manualmente se necessário:
    ```bash
    docker-compose run --rm backend python manage.py seed_db
