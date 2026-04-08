@@ -92,7 +92,7 @@ class DashboardPage(BasePage):
     TASK_DESC_INPUT = (By.NAME, "description")
     TASK_SUBMIT_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(., 'Create') or contains(., 'Criar') or contains(., 'Save') or contains(., 'Salvar'))]")
     TASK_LIST = (By.CSS_SELECTOR, "div.grid")
-    TOGGLE_BUTTON = (By.XPATH, "//div[contains(@class, 'grid')]//button[contains(@class, 'rounded-full')]")
+    TOGGLE_BUTTON = (By.XPATH, "//div[contains(@class, 'grid')]//button[contains(@class, 'mt-1')]")
     COMPLETED_TASK = (By.XPATH, "//div[contains(@class, 'opacity-75')]")
     
     def navigate(self):
