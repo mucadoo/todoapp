@@ -34,8 +34,11 @@ RUN pip install --no-cache /wheels/*
 
 COPY . .
 
-# Create a non-root user
-RUN addgroup --system django && adduser --system --group django
+# Create a non-root user and set permissions
+RUN addgroup --system django && adduser --system --group django && \
+    mkdir -p /app/staticfiles && \
+    chown -R django:django /app
+
 USER django
 
 EXPOSE 8000
