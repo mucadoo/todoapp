@@ -237,20 +237,28 @@ curl http://18.117.222.176/api/external/stats/
 }
 ```
 
-### Principais endpoints autenticados
+### Referência de endpoints
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | /api/auth/register/ | Criar conta |
-| POST | /api/auth/login/ | Login (retorna JWT) |
-| POST | /api/auth/refresh/ | Renovar access token |
-| GET | /api/auth/me/ | Perfil do usuário autenticado |
-| GET/POST | /api/tasks/ | Listar e criar tarefas |
-| GET/PUT/PATCH/DELETE | /api/tasks/{id}/ | Detalhe, edição e exclusão |
-| POST | /api/tasks/{id}/toggle/ | Alternar conclusão |
-| POST | /api/tasks/{id}/share/ | Compartilhar com outro usuário |
-| GET/POST | /api/categories/ | Listar e criar categorias |
-| GET | /api/external/stats/ | Estatísticas públicas |
+| Método | Endpoint | Auth | Descrição |
+|---|---|---|---|
+| POST | /api/auth/register/ | Não | Criar conta |
+| POST | /api/auth/login/ | Não | Login — retorna access + refresh JWT |
+| POST | /api/auth/refresh/ | Não | Renovar access token |
+| GET | /api/auth/check-email/ | Não | Verificar disponibilidade de e-mail |
+| GET | /api/auth/check-username/ | Não | Verificar disponibilidade de username |
+| GET | /api/auth/me/ | Sim | Perfil do usuário autenticado |
+| PUT / PATCH | /api/auth/me/ | Sim | Atualizar e-mail, username e nome |
+| PUT / PATCH | /api/auth/me/password/ | Sim | Alterar senha |
+| PUT / PATCH | /api/auth/me/username/ | Sim | Alterar username |
+| GET | /api/auth/search/ | Sim | Buscar usuários por nome |
+| GET / POST | /api/tasks/ | Sim | Listar (paginado) e criar tarefas |
+| GET / PUT / PATCH / DELETE | /api/tasks/{id}/ | Sim | Detalhe, edição e exclusão |
+| POST | /api/tasks/{id}/toggle/ | Sim | Alternar conclusão da tarefa |
+| POST | /api/tasks/{id}/share/ | Sim | Compartilhar com outro usuário por e-mail |
+| DELETE | /api/tasks/{id}/share/ | Sim | Remover compartilhamento |
+| GET / POST | /api/categories/ | Sim | Listar e criar categorias |
+| GET / PUT / PATCH / DELETE | /api/categories/{id}/ | Sim | Detalhe, edição e exclusão de categoria |
+| GET | /api/external/stats/ | Não | Estatísticas globais públicas |
 
 ---
 
