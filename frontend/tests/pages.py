@@ -21,8 +21,8 @@ class BasePage:
 class LoginPage(BasePage):
     LOGIN_IDENTIFIER_INPUT = (By.ID, "loginIdentifier")
     PASSWORD_INPUT = (By.ID, "password")
-    LOGIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Login') or contains(text(), 'Entrar')]")
-    REGISTER_LINK = (By.LINK_TEXT, "Register")
+    LOGIN_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(text(), 'Login') or contains(text(), 'Entrar'))]")
+    REGISTER_LINK = (By.XPATH, "//a[contains(text(), 'Register') or contains(text(), 'Cadastrar')]")
 
     def navigate(self):
         self.driver.get(f"{self.base_url}/login")
@@ -38,7 +38,7 @@ class RegisterPage(BasePage):
     EMAIL_INPUT = (By.ID, "email")
     PASSWORD_INPUT = (By.ID, "password")
     CONFIRM_PASSWORD_INPUT = (By.ID, "confirmPassword")
-    REGISTER_BUTTON = (By.XPATH, "//button[contains(text(), 'Register') or contains(text(), 'Cadastrar')]")
+    REGISTER_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(text(), 'Register') or contains(text(), 'Cadastrar'))]")
 
     def navigate(self):
         self.driver.get(f"{self.base_url}/register")

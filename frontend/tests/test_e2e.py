@@ -16,11 +16,28 @@ def test_user_flow(driver, base_url):
     # 1. Register a new user
     register_page = RegisterPage(driver, base_url)
     register_page.navigate()
+    # Wait for the page to load by checking for the register button
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(register_page.REGISTER_BUTTON))
     register_page.register("John Doe", username, email, password)
     
     # 2. Login with valid credentials
     login_page = LoginPage(driver, base_url)
-    WebDriverWait(driver, 10).until(EC.url_contains("/login"))
+    # The app should navigate to /login upon successful registration
+    try:
+        WebDriverWait(driver, 20).until(EC.url_contains("/login"))
+    except Exception:
+        # If timeout, print current URL for debugging
+        print(f"Current URL after registration attempt: {driver.current_url}")
+        # Check for error messages on page
+        try:
+            error_msg = driver.find_element(By.CSS_SELECTOR, "div[class*='bg-red-100']").text
+            print(f"Error message on page: {error_msg}")
+        except:
+            pass
+        raise
+
+    # Also wait for the login button to be clickable to ensure the page is fully ready
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(login_page.LOGIN_BUTTON))
     login_page.login(email, password)
     
     # 3. Create a task
