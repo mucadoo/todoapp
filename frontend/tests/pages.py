@@ -10,6 +10,16 @@ class BasePage:
     def find_element(self, locator, timeout=10):
         return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
 
+    def get_text(self, locator, timeout=10):
+        def grab_text(driver):
+            try:
+                element = WebDriverWait(driver, 5).until(EC.visibility_of_element_located(locator))
+                return element.text
+            except Exception:
+                return False
+        
+        return WebDriverWait(self.driver, timeout).until(grab_text)
+
     def click(self, locator, timeout=10):
         def perform_click(driver):
             try:
@@ -93,6 +103,11 @@ class DashboardPage(BasePage):
         self.send_keys(self.TASK_TITLE_INPUT, title)
         self.send_keys(self.TASK_DESC_INPUT, description)
         self.click(self.TASK_SUBMIT_BUTTON)
+        # Wait for the modal to close and the new task to appear in the list
+        WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located(self.TASK_TITLE_INPUT))
+
+    def get_tasks_text(self):
+        return self.get_text(self.TASK_LIST)
 
     def toggle_task(self):
         # The toggle action triggers a React Query mutation and optimistic update,

@@ -37,8 +37,7 @@ def test_user_flow(driver, base_url):
     dashboard_page.create_task("Complete project", "Finish all steps of the test")
     
     # 4. Verify task exists
-    task_list = dashboard_page.find_element(dashboard_page.TASK_LIST)
-    assert "Complete project" in task_list.text
+    assert "Complete project" in dashboard_page.get_tasks_text()
     
     # 5. Toggle task completion
     try:
