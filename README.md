@@ -27,7 +27,7 @@ graph LR
 ## 2. Funcionalidades
 
 - **Autenticação**: Login e registro seguros baseados em JWT.
-- **Gerenciamento de Tarefas**: Criar, atualizar, excluir e alternar status das tarefas.
+- **Gerenciamento de Tarefas**: Criar, atualizar, excluir e alternar status das tarefas com **paginação infinite scroll**.
 - **Categorias**: Organize tarefas com categorias personalizadas.
 - **Compartilhamento de Tarefas**: Compartilhe tarefas com outros usuários do sistema.
 - **Perfil do Usuário**: Atualize informações de perfil, mude o nome de usuário e a senha.
@@ -48,24 +48,26 @@ graph LR
 ### Usando Docker (Recomendado)
 
 1. Clone o repositório.
-2. Crie um arquivo `.env` na raiz do diretório (consulte `.env.example`).
-3. Execute o seguinte comando:
+2. Execute o seguinte comando:
    ```bash
    docker-compose up --build
    ```
-4. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
+   > **Nota**: Ao usar o `docker-compose.yml` padrão para desenvolvimento, **não é necessário configurar variáveis de ambiente manuais**, pois o arquivo já contém valores padrão seguros para o ambiente local.
+3. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
    - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
    - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
    - **Login Padrão (Semeado automaticamente)**:
      - **Desenvolvedor**: `dev@example.com` / `password123`
      - **Tester**: `tester@example.com` / `password123`
      - **Gerente**: `manager@example.com` / `password123`
-5. (Opcional) Semeie o banco de dados manualmente se necessário:
+4. (Opcional) Semeie o banco de dados manualmente se necessário:
    ```bash
    docker-compose run --rm backend python manage.py seed_db
    ```
 
 ### Desenvolvimento Local (sem Docker)
+
+Para desenvolvimento local sem Docker, você precisará configurar as variáveis de ambiente em um arquivo `.env` baseado no `.env.example`.
 
 **Backend:**
 ```bash
@@ -102,23 +104,18 @@ Os testes rodam automaticamente no container `backend` usando Chromium em modo h
 docker exec todoapp_backend pytest /app/frontend_tests/test_e2e.py
 ```
 
-#### B. Usando Navegadores Locais (Windows/WSL)
-Se você estiver no WSL e quiser usar seus navegadores instalados no Windows (como Brave ou Edge):
+#### B. Usando Ambiente Local (WSL/Desktop)
+Para rodar os testes usando um navegador instalado no seu sistema (Chrome, Edge, Brave, etc.):
 
-1. Instale as dependências no seu ambiente WSL:
+1. Instale as dependências:
    ```bash
    pip install selenium webdriver-manager pytest pytest-django
    ```
-2. Defina o caminho para o executável do navegador:
-   - **Brave**: `export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"`
-   - **Edge**: `export CHROME_BINARY_PATH="/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"`
-3. (Opcional) Desative o modo headless se quiser ver o navegador:
+2. Configure as variáveis de ambiente (opcional):
+   - `CHROME_BINARY_PATH`: Caminho para o executável do seu navegador.
+   - `CHROME_HEADLESS`: Defina como `false` para visualizar a execução do navegador.
+3. Execute o pytest:
    ```bash
-   export CHROME_HEADLESS="false"
-   ```
-4. Execute o pytest na pasta do projeto:
-   ```bash
-   # No diretório raiz do projeto:
    pytest frontend/tests/test_e2e.py -m e2e
    ```
 
