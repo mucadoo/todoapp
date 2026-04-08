@@ -22,7 +22,7 @@ class LoginPage(BasePage):
     LOGIN_IDENTIFIER_INPUT = (By.ID, "loginIdentifier")
     PASSWORD_INPUT = (By.ID, "password")
     LOGIN_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(., 'Login') or contains(., 'Entrar'))]")
-    REGISTER_LINK = (By.XPATH, "//a[contains(., 'Register') or contains(., 'Cadastrar')]")
+    REGISTER_LINK = (By.XPATH, "//a[contains(., 'Register') or contains(., 'Cadastrar') or contains(@href, '/register')]")
 
     def navigate(self):
         self.driver.get(f"{self.base_url}/login")

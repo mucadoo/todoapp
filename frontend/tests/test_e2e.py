@@ -53,16 +53,18 @@ def test_user_flow(driver, base_url):
     # Find the toggle button (checkbox-like) inside the task item
     try:
         # Use a more specific selector for the completion button
+        # The button is likely the first button in the task card or has a specific class
         toggle_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.rounded-full.border-2"))
+            EC.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'grid')]//button[contains(@class, 'rounded-full')]"))
         )
         toggle_button.click()
         # Verify it looks completed (opacity change)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.opacity-75")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'opacity-75')]")))
     except Exception as e:
         print(f"Failed to toggle task: {e}")
-        # Take a screenshot if possible or log state
-        pass
+        # Log the page source for debugging
+        print(driver.page_source[:1000])
+        raise
 
     # 6. Logout
     dashboard_page.logout()

@@ -96,9 +96,24 @@ jobs:
         run: |
           docker-compose up -d db backend frontend
           # Wait for services to be ready
-          sleep 30
+          echo "Waiting for services to be ready..."
+          max_attempts=30
+          attempt=1
+          until [ $attempt -gt $max_attempts ] || curl -s http://localhost:3000 > /dev/null; do
+            echo "Attempt $attempt/$max_attempts: Waiting for frontend..."
+            sleep 5
+            attempt=$((attempt+1))
+          done
+          
+          if [ $attempt -gt $max_attempts ]; then
+            echo "Timeout waiting for services"
+            docker-compose logs
+            exit 1
+          fi
+
           # Run Selenium tests
           pip install selenium webdriver-manager pytest
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/frontend/tests
           pytest frontend/tests/test_e2e.py
           docker-compose down
 
