@@ -1,9 +1,9 @@
-from .base import *
+from .base import *  # noqa: F403, F405
 
 DEBUG = False
 
 # SECURITY WARNING: define ALLOWED_HOSTS in production!
-ALLOWED_HOSTS = config(
+ALLOWED_HOSTS = config(  # noqa: F405
     "ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")]
 )
 
