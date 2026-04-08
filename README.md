@@ -123,9 +123,9 @@ Para rodar os testes usando um navegador instalado no seu sistema (Chrome, Edge,
 
 O projeto utiliza `drf-spectacular` para gerar esquemas OpenAPI 3.0. Com o backend em execução, você pode acessar a documentação interativa em:
 
-- **Swagger UI**: [http://localhost:8000/api/docs/swagger-ui/](http://localhost:8000/api/docs/swagger-ui/)
-- **ReDoc**: [http://localhost:8000/api/docs/redoc/](http://localhost:8000/api/docs/redoc/)
-- **Esquema (YAML)**: [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/)
+- **Swagger UI**: /api/docs/swagger-ui
+- **ReDoc**: /api/docs/redoc
+- **Esquema (YAML)**: /api/schema
 
 ## 7. Estatísticas Públicas (API Aberta)
 
