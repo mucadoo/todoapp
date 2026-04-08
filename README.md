@@ -2,20 +2,27 @@
 
 Uma aplicação web de lista de tarefas com qualidade de produção, apresentando recursos avançados como compartilhamento de tarefas, categorias e estatísticas públicas.
 
+**URL de Produção:** [http://18.117.222.176/](http://18.117.222.176/)
+
 ## 1. Visão Geral da Arquitetura
 
 ```mermaid
 graph LR
-    User[Usuário/Navegador] <--> Frontend[React 18 / Vite]
-    Frontend <--> Backend[Django 5 / DRF]
+    User[Usuário/Navegador] <--> Nginx[Nginx Reverse Proxy]
+    Nginx <--> Frontend[React 18 / Vite / Static Assets]
+    Nginx <--> Backend[Django 5 / DRF / Gunicorn]
     Backend <--> DB[(PostgreSQL 16)]
     ThirdParty[Integração de Terceiros] --> Backend
 ```
 
+- **Infrastrutura de Produção**: 
+  - **Nginx**: Atua como proxy reverso, servindo os arquivos estáticos do React e encaminhando requisições `/api/` para o backend.
+  - **Gunicorn**: Servidor WSGI de produção para a aplicação Django.
+  - **Docker Compose**: Orquestração de containers (Frontend, Backend, Banco de Dados) em rede isolada.
 - **Backend**: Python 3.12, Django 5, Django REST Framework, SimpleJWT (Autenticação), PostgreSQL, drf-spectacular (OpenAPI).
 - **Frontend**: React 18, TypeScript, Axios, React Query, Tailwind CSS, Lucide Icons, React Hook Form, i18next (Internacionalização).
 - **Testes**: Pytest (Backend), Selenium + Pytest (Frontend E2E).
-- **Infraestrutura**: Docker, Docker Compose, GitHub Actions (CI/CD).
+- **CI/CD**: GitHub Actions com deploy automatizado para AWS EC2.
 
 ## 2. Funcionalidades
 
@@ -115,23 +122,6 @@ Se você estiver no WSL e quiser usar seus navegadores instalados no Windows (co
    pytest frontend/tests/test_e2e.py -m e2e
    ```
 
-#### C. Comandos Prontos para Brave/Edge (WSL)
-Se você quiser rodar agora mesmo usando seus navegadores do Windows:
-
-**Para Brave:**
-```bash
-export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-export CHROME_HEADLESS="false"
-pytest frontend/tests/test_e2e.py -m e2e
-```
-
-**Para Edge:**
-```bash
-export CHROME_BINARY_PATH="/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-export CHROME_HEADLESS="false"
-pytest frontend/tests/test_e2e.py -m e2e
-```
-
 ## 6. Documentação da API
 
 O projeto utiliza `drf-spectacular` para gerar esquemas OpenAPI 3.0. Com o backend em execução, você pode acessar a documentação interativa em:
@@ -185,35 +175,24 @@ O pipeline do GitHub Actions (`.github/workflows/ci.yml`) é acionado em cada pu
 
 ## 10. Implantação (AWS EC2)
 
-### Pré-requisitos
-- Instância AWS EC2 (t2.micro é suficiente) executando Ubuntu/Amazon Linux.
-- Regras do Grupo de Segurança: Permitir SSH (22), HTTP (80) e HTTPS (443).
-- Docker e Docker Compose (V2) instalados no servidor.
-- O servidor deve estar logado no GHCR para baixar imagens privadas (se aplicável):
-  ```bash
-  echo <SEU_TOKEN_GITHUB> | docker login ghcr.io -u <SEU_USUARIO_GITHUB> --password-stdin
-  ```
+A aplicação está disponível em: [http://18.117.222.176/](http://18.117.222.176/)
+
+### Infraestrutura
+- **AWS EC2**: Instância t2.micro rodando Ubuntu.
+- **Nginx**: Configurado como servidor web e proxy reverso dentro do container frontend.
+- **Segurança**: Grupo de segurança permitindo portas 22 (SSH) e 80 (HTTP).
 
 ### Segredos do GitHub para Configurar
 Defina estes segredos no seu repositório GitHub (Configurações > Segredos e variáveis > Actions):
-- `EC2_HOST`: O IP público ou DNS da sua instância EC2.
-- `EC2_USER`: O nome de usuário SSH (ex: `ubuntu` ou `ec2-user`).
-- `EC2_SSH_KEY`: O conteúdo da sua chave SSH privada (arquivo `.pem`).
+- `EC2_USER`: O nome de usuário SSH (ex: `ubuntu`).
+- `EC2_SSH_KEY`: O conteúdo da sua chave SSH privada.
+- `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY`: Credenciais para deploy via CloudFormation/CLI.
 - `POSTGRES_PASSWORD`: Senha de produção para o banco de dados.
 - `SECRET_KEY`: Chave secreta de produção do Django.
 
-### Configuração Única do Servidor
-```bash
-# Atualizar e instalar Docker
-sudo apt-get update
-sudo apt-get install ca-certificates cursor-utils curl gnupg
-# ... siga os passos oficiais de instalação do Docker para sua distribuição ...
-# Adicione seu usuário ao grupo docker para executar sem sudo
-sudo usermod -aG docker $USER && newgrp docker
-```
-
 ## 11. Decisões de Design
 
+- **Nginx como Proxy**: Utilizado para unificar o acesso ao frontend e backend sob a mesma porta (80), facilitando a configuração de CORS e roteamento.
 - **Autenticação JWT**: Utilizada para autenticação sem estado, com `SimpleJWT` fornecendo a lógica de tokens de acesso e renovação.
 - **UUID PKs**: Utilizados em todos os modelos (Usuário, Categoria, Tarefa) para segurança e melhor escalabilidade em sistemas distribuídos.
 - **React Query**: Escolhido para um gerenciamento poderoso do estado do servidor, cache e atualizações otimistas para alternar a conclusão de tarefas.
