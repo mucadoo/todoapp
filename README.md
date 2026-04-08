@@ -46,20 +46,16 @@ graph LR
    ```bash
    docker-compose up --build
    ```
-4. (Opcional) Semeie o banco de dados com dados iniciais:
+4. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
+   - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
+   - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
+   - **Login Padrão (Semeado automaticamente)**:
+     - **E-mail**: `dev@example.com`
+     - **Senha**: `password123`
+5. (Opcional) Semeie o banco de dados manualmente se necessário:
    ```bash
    docker-compose run --rm backend python manage.py seed_db
    ```
-   *Alternativamente, você pode iniciar o app com a semeadura habilitada definindo uma variável de ambiente:*
-   ```bash
-   SEED_DB=true docker-compose up --build
-   ```
-5. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
-   - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
-   - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
-   *Se você semeou o banco de dados, pode fazer login com:*
-   - **E-mail**: `dev@example.com`
-   - **Senha**: `password123`
 
 ### Desenvolvimento Local (sem Docker)
 
