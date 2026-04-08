@@ -40,21 +40,26 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           yum update -y
-
-          # Install Docker
           yum install -y docker
-          systemctl start docker
-          systemctl enable docker
-          usermod -aG docker ec2-user
 
-          # Install Docker Compose v2 plugin (correct path for AL2023)
+          # Install Docker Compose plugin (system-wide for AL2023)
           mkdir -p /usr/libexec/docker/cli-plugins
           curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
             -o /usr/libexec/docker/cli-plugins/docker-compose
           chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
-          # Reboot to apply docker group membership
-          echo "Docker and Compose installed. Rebooting..."
+          systemctl enable --now docker
+
+          # Add user to docker group and make it effective immediately for future sessions
+          usermod -aG docker ec2-user
+
+          # Create a script that runs on next login to fix group
+          echo '#!/bin/bash
+          newgrp docker
+          ' > /etc/profile.d/docker-group.sh
+          chmod +x /etc/profile.d/docker-group.sh
+
+          echo "Docker setup completed. Rebooting..."
           reboot
       Tags:
         - Key: Name
