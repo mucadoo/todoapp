@@ -19,6 +19,7 @@ services:
     container_name: todoapp_backend
     volumes:
       - ./backend:/app
+      - ./frontend/tests:/app/frontend_tests
     environment:
       - DATABASE_URL=postgres://todo_user:todo_password@db:5432/todoapp
       - DEBUG=True

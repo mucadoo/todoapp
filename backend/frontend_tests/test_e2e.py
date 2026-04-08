@@ -50,20 +50,19 @@ def test_user_flow(driver, base_url):
     assert "Complete project" in task_list.text
     
     # 5. Toggle task completion
-    # Find the toggle button (checkbox-like) inside the task item
-    try:
-        # Use a more specific selector for the completion button
-        toggle_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.rounded-full.border-2"))
-        )
-        toggle_button.click()
-        # Verify it looks completed (opacity change)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.opacity-75")))
-    except Exception as e:
-        print(f"Failed to toggle task: {e}")
-        # Take a screenshot if possible or log state
-        pass
-
-    # 6. Logout
+    toggle_button = driver.find_element(By.CSS_SELECTOR, "button[class*='focus:outline-none']")
+    toggle_button.click()
+    # Check if opacity changes or class changes (optimistic update)
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[class*='opacity-75']")))
+    
+    # 6. Filter tasks
+    status_filter = driver.find_element(By.CSS_SELECTOR, "select[value='active']") # default is active? no, all
+    # find by text content if value is not reliable
+    # Let's use simpler selector
+    selects = driver.find_elements(By.TAG_NAME, "select")
+    status_select = selects[0]
+    status_select.send_keys("Completed")
+    
+    # 7. Logout
     dashboard_page.logout()
     WebDriverWait(driver, 10).until(EC.url_contains("/login"))

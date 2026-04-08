@@ -21,8 +21,8 @@ class BasePage:
 class LoginPage(BasePage):
     LOGIN_IDENTIFIER_INPUT = (By.ID, "loginIdentifier")
     PASSWORD_INPUT = (By.ID, "password")
-    LOGIN_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(., 'Login') or contains(., 'Entrar'))]")
-    REGISTER_LINK = (By.XPATH, "//a[contains(., 'Register') or contains(., 'Cadastrar')]")
+    LOGIN_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(text(), 'Login') or contains(text(), 'Entrar'))]")
+    REGISTER_LINK = (By.XPATH, "//a[contains(text(), 'Register') or contains(text(), 'Cadastrar')]")
 
     def navigate(self):
         self.driver.get(f"{self.base_url}/login")
@@ -38,7 +38,7 @@ class RegisterPage(BasePage):
     EMAIL_INPUT = (By.ID, "email")
     PASSWORD_INPUT = (By.ID, "password")
     CONFIRM_PASSWORD_INPUT = (By.ID, "confirmPassword")
-    REGISTER_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(., 'Register') or contains(., 'Cadastrar'))]")
+    REGISTER_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(text(), 'Register') or contains(text(), 'Cadastrar'))]")
 
     def navigate(self):
         self.driver.get(f"{self.base_url}/register")
@@ -52,11 +52,11 @@ class RegisterPage(BasePage):
         self.click(self.REGISTER_BUTTON)
 
 class DashboardPage(BasePage):
-    NEW_TASK_BUTTON = (By.XPATH, "//button[contains(., 'New Task') or contains(., 'Nova Tarefa')]")
-    LOGOUT_BUTTON = (By.XPATH, "//button[contains(., 'Logout') or contains(., 'Sair')]")
+    NEW_TASK_BUTTON = (By.XPATH, "//button[.//span[contains(text(), 'New Task')] or .//span[contains(text(), 'Nova Tarefa')]]")
+    LOGOUT_BUTTON = (By.XPATH, "//button[.//span[contains(text(), 'Logout')] or .//span[contains(text(), 'Sair')]]")
     TASK_TITLE_INPUT = (By.NAME, "title")
     TASK_DESC_INPUT = (By.NAME, "description")
-    TASK_SUBMIT_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(., 'Create') or contains(., 'Criar') or contains(., 'Save') or contains(., 'Salvar'))]")
+    TASK_SUBMIT_BUTTON = (By.XPATH, "//button[@type='submit' and (contains(text(), 'Create') or contains(text(), 'Criar'))]")
     TASK_LIST = (By.CSS_SELECTOR, "div.grid")
     
     def navigate(self):

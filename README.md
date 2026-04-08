@@ -85,10 +85,51 @@ cd backend
 pytest --cov=apps
 ```
 
-### Testes de Frontend E2E
+### Testes de Frontend E2E (Selenium)
+
+Os testes de ponta a ponta podem ser executados de duas maneiras:
+
+#### A. Dentro do Docker (Headless)
+Os testes rodam automaticamente no container `backend` usando Chromium em modo headless.
 ```bash
-cd frontend/tests
-pytest test_e2e.py
+docker exec todoapp_backend pytest /app/frontend_tests/test_e2e.py
+```
+
+#### B. Usando Navegadores Locais (Windows/WSL)
+Se você estiver no WSL e quiser usar seus navegadores instalados no Windows (como Brave ou Edge):
+
+1. Instale as dependências no seu ambiente WSL:
+   ```bash
+   pip install selenium webdriver-manager pytest pytest-django
+   ```
+2. Defina o caminho para o executável do navegador:
+   - **Brave**: `export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"`
+   - **Edge**: `export CHROME_BINARY_PATH="/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"`
+3. (Opcional) Desative o modo headless se quiser ver o navegador:
+   ```bash
+   export CHROME_HEADLESS="false"
+   ```
+4. Execute o pytest na pasta do projeto:
+   ```bash
+   # No diretório raiz do projeto:
+   pytest frontend/tests/test_e2e.py -m e2e
+   ```
+
+#### C. Comandos Prontos para Brave/Edge (WSL)
+Se você quiser rodar agora mesmo usando seus navegadores do Windows:
+
+**Para Brave:**
+```bash
+export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+export CHROME_HEADLESS="false"
+pytest frontend/tests/test_e2e.py -m e2e
+```
+
+**Para Edge:**
+```bash
+export CHROME_BINARY_PATH="/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+export CHROME_HEADLESS="false"
+pytest frontend/tests/test_e2e.py -m e2e
 ```
 
 ## 6. Documentação da API
