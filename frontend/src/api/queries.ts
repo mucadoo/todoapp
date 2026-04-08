@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tansta
 import { useTranslation } from 'react-i18next';
 import { authApi } from './auth';
 import { tasksApi } from './tasks';
-import { TaskFilters, Task, Category } from '../types/tasks';
+import { TaskFilters, Task, Category, PaginatedResponse } from '../types/tasks';
 import { useToast } from '../hooks/useToast';
 import { User } from '../types/auth';
 
@@ -144,11 +144,11 @@ export const useTasks = (filters: TaskFilters = {}) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
       const previousTasksData = queryClient.getQueryData(['tasks', filters]);
 
-      queryClient.setQueryData(['tasks', filters], (old: PaginatedResponse<Task> | undefined) => {
+      queryClient.setQueryData(['tasks', filters], (old: { pages: PaginatedResponse<Task>[]; pageParams: any[] } | undefined) => {
         if (!old) return old;
         return {
           ...old,
-          pages: (old as any).pages.map((page: PaginatedResponse<Task>) => ({
+          pages: old.pages.map((page: PaginatedResponse<Task>) => ({
             ...page,
             results: page.results.map((task: Task) =>
               task.id === id ? { ...task, is_completed: !task.is_completed } : task
