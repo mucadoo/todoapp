@@ -3,7 +3,9 @@ from .base import config
 DEBUG = False
 
 # SECURITY WARNING: define ALLOWED_HOSTS in production!
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")]
+)
 
 # Secure settings
 SECURE_SSL_REDIRECT = True

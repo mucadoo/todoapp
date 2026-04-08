@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class IsOwner(permissions.BasePermission):
     """
     Object-level permission to allow only owners of an object to edit/delete it.
@@ -10,21 +11,22 @@ class IsOwner(permissions.BasePermission):
         # Always allow owners full access
         if obj.owner == request.user:
             return True
-        
+
         # Check if the object is shared with the current user
         is_shared = False
         # For Category, check if any task in this category is shared with the user
-        if hasattr(obj, 'tasks'):
+        if hasattr(obj, "tasks"):
             is_shared = obj.tasks.filter(shared_with=request.user).exists()
         # For Task, check if the task itself is shared
-        elif hasattr(obj, 'shared_with'):
+        elif hasattr(obj, "shared_with"):
             is_shared = obj.shared_with.filter(id=request.user.id).exists()
-        
+
         # Non-owners can only use safe methods (GET, HEAD, OPTIONS)
         if is_shared and request.method in permissions.SAFE_METHODS:
             return True
-            
+
         return False
+
 
 class IsTaskOwner(permissions.BasePermission):
     """

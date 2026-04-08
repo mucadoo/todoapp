@@ -7,21 +7,20 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/auth/', include('users.urls')),
-    path('api/', include('tasks.urls')),
-    path('api/external/', include('external_api.urls')),
-    
+    path("admin/", admin.site.urls),
+    path("api/auth/", include("users.urls")),
+    path("api/", include("tasks.urls")),
+    path("api/external/", include("external_api.urls")),
     # OpenAPI Schema and Swagger/Redoc UI
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        'api/docs/swagger-ui/',
-        SpectacularSwaggerView.as_view(url_name='schema'),
-        name='swagger-ui',
+        "api/docs/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
     ),
     path(
-        'api/docs/redoc/',
-        SpectacularRedocView.as_view(url_name='schema'),
-        name='redoc',
+        "api/docs/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
     ),
 ]

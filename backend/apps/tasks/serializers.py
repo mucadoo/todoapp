@@ -5,67 +5,95 @@ from apps.users.serializers import UserSerializer
 
 User = get_user_model()
 
+
 class CategorySerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     is_shared = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'color', 'owner', 'is_shared', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'owner', 'is_shared', 'created_at', 'updated_at')
+        fields = (
+            "id",
+            "name",
+            "color",
+            "owner",
+            "is_shared",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "owner", "is_shared", "created_at", "updated_at")
 
     def get_is_shared(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request and request.user.is_authenticated:
             return obj.owner != request.user
         return False
 
     def create(self, validated_data):
-        validated_data['owner'] = self.context['request'].user
+        validated_data["owner"] = self.context["request"].user
         return super().create(validated_data)
+
 
 class SharedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'name', 'username')
+        fields = ("id", "email", "name", "username")
+
 
 class TaskSerializer(serializers.ModelSerializer):
-    category_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+    category_id = serializers.UUIDField(
+        write_only=True, required=False, allow_null=True
+    )
     shared_with = SharedUserSerializer(many=True, read_only=True)
     owner = UserSerializer(read_only=True)
-    
+
     class Meta:
         model = Task
         fields = (
-            'id', 'title', 'description', 'is_completed', 'due_date', 'has_time',
-            'priority', 'category', 'category_id', 'owner', 'shared_with',
-            'created_at', 'updated_at'
+            "id",
+            "title",
+            "description",
+            "is_completed",
+            "due_date",
+            "has_time",
+            "priority",
+            "category",
+            "category_id",
+            "owner",
+            "shared_with",
+            "created_at",
+            "updated_at",
         )
-        read_only_fields = ('id', 'owner', 'shared_with', 'created_at', 'updated_at')
+        read_only_fields = ("id", "owner", "shared_with", "created_at", "updated_at")
         depth = 1
 
     def validate_category_id(self, value):
         if value:
             try:
                 # Strictly only allow categories owned by the user
-                category = Category.objects.get(id=value, owner=self.context['request'].user)
+                category = Category.objects.get(
+                    id=value, owner=self.context["request"].user
+                )
                 return category
             except Category.DoesNotExist:
-                raise serializers.ValidationError("Category does not exist or does not belong to you.")
+                raise serializers.ValidationError(
+                    "Category does not exist or does not belong to you."
+                )
         return None
 
     def create(self, validated_data):
-        category = validated_data.pop('category_id', None)
-        validated_data['owner'] = self.context['request'].user
+        category = validated_data.pop("category_id", None)
+        validated_data["owner"] = self.context["request"].user
         if category:
-            validated_data['category'] = category
+            validated_data["category"] = category
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        category = validated_data.pop('category_id', None)
+        category = validated_data.pop("category_id", None)
         if category is not None:
             instance.category = category
         return super().update(instance, validated_data)
+
 
 class ShareTaskSerializer(serializers.Serializer):
     email = serializers.EmailField()
