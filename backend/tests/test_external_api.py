@@ -1,7 +1,6 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from tasks.models import Task, Category
 
 @pytest.mark.django_db
 def test_external_stats_accuracy(api_client, user_factory, task_factory, category_factory):

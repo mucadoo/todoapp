@@ -1,12 +1,9 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 @pytest.mark.django_db
-def test_user_registration(api_client):
+def test_user_registration(api_client, User):
     url = reverse('register')
     data = {
         'email': 'test@example.com',

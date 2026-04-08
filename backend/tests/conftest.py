@@ -3,14 +3,16 @@ from rest_framework.test import APIClient
 from model_bakery import baker
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+@pytest.fixture
+def User():
+    return get_user_model()
 
 @pytest.fixture
 def api_client():
     return APIClient()
 
 @pytest.fixture
-def user_factory(db):
+def user_factory(db, User):
     def make_user(**kwargs):
         return baker.make(User, **kwargs)
     return make_user

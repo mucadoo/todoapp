@@ -1,10 +1,14 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from tasks.models import Task, Category
+
+def get_models():
+    from tasks.models import Task, Category
+    return Task, Category
 
 @pytest.mark.django_db
 def test_category_crud(auth_client):
+    Task, Category = get_models()
     client, user = auth_client
     url = reverse('category-list-create')
     
@@ -51,6 +55,7 @@ def test_category_scoping(auth_client, user_factory, category_factory):
 
 @pytest.mark.django_db
 def test_task_crud(auth_client, category_factory):
+    Task, Category = get_models()
     client, user = auth_client
     category = category_factory(owner=user)
     url = reverse('task-list-create')

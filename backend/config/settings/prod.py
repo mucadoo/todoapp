@@ -1,4 +1,4 @@
-from .base import config
+from .base import *
 
 DEBUG = False
 
