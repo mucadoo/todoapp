@@ -13,7 +13,11 @@ class IsOwner(permissions.BasePermission):
         
         # Check if the object is shared with the current user
         is_shared = False
-        if hasattr(obj, 'shared_with'):
+        # For Category, check if any task in this category is shared with the user
+        if hasattr(obj, 'tasks'):
+            is_shared = obj.tasks.filter(shared_with=request.user).exists()
+        # For Task, check if the task itself is shared
+        elif hasattr(obj, 'shared_with'):
             is_shared = obj.shared_with.filter(id=request.user.id).exists()
         
         # Non-owners can only use safe methods (GET, HEAD, OPTIONS)

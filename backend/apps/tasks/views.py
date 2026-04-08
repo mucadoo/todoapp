@@ -12,7 +12,9 @@ class CategoryListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Category.objects.filter(owner=self.request.user).order_by('-created_at')
+        return Category.objects.filter(
+            Q(owner=self.request.user) | Q(tasks__shared_with=self.request.user)
+        ).distinct().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
