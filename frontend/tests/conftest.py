@@ -41,10 +41,9 @@ def driver():
         # Fallback to webdriver-manager
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         
-    driver.implicitly_wait(10)
     yield driver
     driver.quit()
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:3000"
+    return os.environ.get("APP_URL", "http://localhost:3000")

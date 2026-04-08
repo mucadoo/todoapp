@@ -17,28 +17,18 @@ def test_user_flow(driver, base_url):
     # 1. Register a new user
     register_page = RegisterPage(driver, base_url)
     register_page.navigate()
-    # Wait for the page to load by checking for the register button
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(register_page.REGISTER_BUTTON))
     register_page.register("John Doe", username, email, password)
+    
+    # Wait for success toast to ensure registration is processed
+    register_page.wait_for_success()
     
     # 2. Login with valid credentials
     login_page = LoginPage(driver, base_url)
     # The app should navigate to /login upon successful registration
-    try:
-        WebDriverWait(driver, 20).until(EC.url_contains("/login"))
-    except Exception:
-        # If timeout, print current URL for debugging
-        print(f"Current URL after registration attempt: {driver.current_url}")
-        # Check for error messages on page
-        try:
-            error_msg = driver.find_element(By.CSS_SELECTOR, "div[class*='bg-red-100']").text
-            print(f"Error message on page: {error_msg}")
-        except:
-            pass
-        raise
-
-    # Also wait for the login button to be clickable to ensure the page is fully ready
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(login_page.LOGIN_BUTTON))
+    WebDriverWait(driver, 20).until(EC.url_contains("/login"))
+    
+    # Ensure the login page is ready
+    login_page.find_element(login_page.LOGIN_BUTTON)
     login_page.login(email, password)
     
     # 3. Create a task
@@ -51,16 +41,8 @@ def test_user_flow(driver, base_url):
     assert "Complete project" in task_list.text
     
     # 5. Toggle task completion
-    # Find the toggle button (checkbox-like) inside the task item
     try:
-        # Use a more specific selector for the completion button
-        # The button is likely the first button in the task card or has a specific class
-        toggle_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'grid')]//button[contains(@class, 'rounded-full')]"))
-        )
-        toggle_button.click()
-        # Verify it looks completed (opacity change)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'opacity-75')]")))
+        dashboard_page.toggle_task()
     except Exception as e:
         print(f"Failed to toggle task: {e}")
         # Log the page source for debugging
