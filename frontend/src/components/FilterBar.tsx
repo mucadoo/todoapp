@@ -29,7 +29,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, c
     if (filters.search !== localSearchQuery) {
       setLocalSearchQuery(filters.search || '');
     }
-  }, [filters.search]);
+  }, [filters.search, localSearchQuery]);
 
   const handleLocalSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchQuery(e.target.value);

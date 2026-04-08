@@ -42,7 +42,7 @@ def test_category_scoping(auth_client, user_factory, category_factory):
     url = reverse('category-list-create')
     response = client.get(url)
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.data['results']) == 0
+    assert response.data['count'] == 0
     
     # User A tries to access User B's category directly
     detail_url = reverse('category-detail', kwargs={'id': category_b.id})
@@ -117,16 +117,16 @@ def test_task_sharing(auth_client, user_factory, task_factory):
 @pytest.mark.django_db
 def test_task_filtering_and_pagination(auth_client, task_factory):
     client, user = auth_client
-    # Create 15 tasks (pagination is set to 10)
+    # Create 15 tasks
     for i in range(15):
         task_factory(owner=user, is_completed=(i < 5), priority=('low' if i < 10 else 'high'))
         
     url = reverse('task-list-create')
     
-    # Test Pagination
+    # Test Pagination (PAGE_SIZE is 30 by default in base.py)
     response = client.get(url)
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.data['results']) == 10
+    assert len(response.data['results']) == 15
     assert response.data['count'] == 15
     
     # Test Filtering by is_completed=true

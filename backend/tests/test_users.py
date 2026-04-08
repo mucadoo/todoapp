@@ -10,6 +10,7 @@ def test_user_registration(api_client):
     url = reverse('register')
     data = {
         'email': 'test@example.com',
+        'username': 'test_user',
         'name': 'Test User',
         'password': 'password123'
     }

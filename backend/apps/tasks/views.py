@@ -25,6 +25,11 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     lookup_field = 'id'
 
+    def get_queryset(self):
+        return Category.objects.filter(
+            Q(owner=self.request.user) | Q(tasks__shared_with=self.request.user)
+        ).distinct()
+
 class TaskFilter(filters.FilterSet):
     # Using DateFilter instead of DateTimeFilter handles the "same day" filtering 
     # correctly by treating input as a full day range.

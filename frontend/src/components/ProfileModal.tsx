@@ -65,8 +65,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.username?.[0] || t('auth.usernameUpdateError');
+    onError: (error: Error) => {
+      const axiosError = error as any;
+      const message = axiosError.response?.data?.username?.[0] || t('auth.usernameUpdateError');
       showToast(message, 'error');
     },
   });
@@ -79,13 +80,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
       setPasswordErrors({});
       setActiveTab('profile');
     },
-    onError: (error: any) => {
-      if (error.response?.data?.old_password) {
+    onError: (error: Error) => {
+      const axiosError = error as any;
+      if (axiosError.response?.data?.old_password) {
         setPasswordErrors(prev => ({ ...prev, old_password: t('auth.wrongOldPassword') }));
-      } else if (error.response?.data?.new_password) {
-        setPasswordErrors(prev => ({ ...prev, new_password: error.response.data.new_password[0] }));
-      } else if (error.response?.data?.confirm_password) {
-        setPasswordErrors(prev => ({ ...prev, confirm_password: error.response.data.confirm_password[0] }));
+      } else if (axiosError.response?.data?.new_password) {
+        setPasswordErrors(prev => ({ ...prev, new_password: axiosError.response.data.new_password[0] }));
+      } else if (axiosError.response?.data?.confirm_password) {
+        setPasswordErrors(prev => ({ ...prev, confirm_password: axiosError.response.data.confirm_password[0] }));
       } else {
         showToast(t('auth.passwordChangeError'), 'error');
       }
@@ -199,7 +201,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         await Promise.all(promises);
         showToast(t('auth.profileUpdateSuccess'), 'success');
         onClose();
-      } catch (error) { }
+      } catch (error) {
+        // Error handled by mutation onError
+      }
     } else {
       onClose();
     }
@@ -210,7 +214,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     if (!validatePasswordChange()) return;
     try {
       await changePasswordMutation.mutateAsync(passwordData);
-    } catch (error) { }
+    } catch (error) {
+      // Error handled by mutation onError
+    }
   };
 
   const isProfilePending = updateProfileMutation.isPending || updateUsernameMutation.isPending || isCheckingUsername || isCheckingEmail;

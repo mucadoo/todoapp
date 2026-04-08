@@ -44,8 +44,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
       showToast(t('profile.usernameUpdateSuccess'), 'success');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.username?.[0] || t('profile.genericError');
+    onError: (error: Error) => {
+      const axiosError = error as any;
+      const message = axiosError.response?.data?.username?.[0] || t('profile.genericError');
       showToast(message, 'error');
     },
   });
@@ -143,11 +144,11 @@ export const useTasks = (filters: TaskFilters = {}) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
       const previousTasksData = queryClient.getQueryData(['tasks', filters]);
 
-      queryClient.setQueryData(['tasks', filters], (old: any) => {
+      queryClient.setQueryData(['tasks', filters], (old: PaginatedResponse<Task> | undefined) => {
         if (!old) return old;
         return {
           ...old,
-          pages: old.pages.map((page: any) => ({
+          pages: (old as any).pages.map((page: PaginatedResponse<Task>) => ({
             ...page,
             results: page.results.map((task: Task) =>
               task.id === id ? { ...task, is_completed: !task.is_completed } : task
