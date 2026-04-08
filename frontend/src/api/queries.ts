@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { authApi } from './auth';
 import { tasksApi } from './tasks';
 import { TaskFilters, Task, Category } from '../types/tasks';
-import { useToast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 import { User } from '../types/auth';
 
 export const useAuth = () => {

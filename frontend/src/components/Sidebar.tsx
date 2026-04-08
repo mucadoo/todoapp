@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useCategories } from '../api/queries';
 import { LayoutDashboard, FolderOpen, LogOut, Settings2, X, Languages, Sun, Moon, CheckCircle2, User, FilterX, Users } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../hooks/useTheme';
 import { SidebarItemSkeleton } from './Skeleton';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';

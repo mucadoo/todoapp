@@ -4,7 +4,7 @@ import { X, User, Mail, Save, Loader2, AtSign, Lock, ShieldCheck } from 'lucide-
 import { useAuth } from '../api/queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../api/auth';
-import { useToast } from './Toast';
+import { useToast } from '../hooks/useToast';
 import { ChangePasswordData } from '../types/auth';
 
 interface ProfileModalProps {

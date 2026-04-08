@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../api/queries';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../hooks/useToast';
 import { authApi } from '../api/auth';
 import { Sun, Moon, Languages, Loader2 } from 'lucide-react';
-import { useToast } from '../components/Toast';
 
 export const RegisterPage: React.FC = () => {
   const { t, i18n } = useTranslation();
