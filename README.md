@@ -193,6 +193,7 @@ Defina estes segredos no seu repositório GitHub (Configurações > Segredos e v
 ## 11. Decisões de Design
 
 - **Nginx como Proxy**: Utilizado para unificar o acesso ao frontend e backend sob a mesma porta (80), facilitando a configuração de CORS e roteamento.
+- **Infinite Scrolling**: Implementado no frontend usando `useInfiniteQuery` do React Query para uma experiência de navegação fluida em vez de paginação tradicional por números de página.
 - **Autenticação JWT**: Utilizada para autenticação sem estado, com `SimpleJWT` fornecendo a lógica de tokens de acesso e renovação.
 - **UUID PKs**: Utilizados em todos os modelos (Usuário, Categoria, Tarefa) para segurança e melhor escalabilidade em sistemas distribuídos.
 - **React Query**: Escolhido para um gerenciamento poderoso do estado do servidor, cache e atualizações otimistas para alternar a conclusão de tarefas.
