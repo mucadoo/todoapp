@@ -47,11 +47,11 @@ fi
 if [ "${USE_SUDO:-false}" = true ]; then
   echo "Running docker compose with sudo..."
   sudo docker compose -f $DOCKER_COMPOSE_FILE pull
-  sudo docker compose -f $DOCKER_COMPOSE_FILE up -d --remove-orphans
+  sudo docker compose -f $DOCKER_COMPOSE_FILE up -d --remove-orphans --force-recreate
   sudo docker image prune -f
 else
   docker compose -f $DOCKER_COMPOSE_FILE pull
-  docker compose -f $DOCKER_COMPOSE_FILE up -d --remove-orphans
+  docker compose -f $DOCKER_COMPOSE_FILE up -d --remove-orphans --force-recreate
   docker image prune -f
 fi
 
