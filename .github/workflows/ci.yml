@@ -147,6 +147,8 @@ jobs:
           context: ./frontend
           push: true
           tags: ghcr.io/${{ github.repository }}/todoapp-frontend:latest
+          build-args: |
+            VITE_API_BASE_URL=/api
 
   deploy:
     runs-on: ubuntu-latest
