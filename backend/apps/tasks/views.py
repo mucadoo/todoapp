@@ -2,7 +2,6 @@ from django.db.models import Q
 from django_filters import rest_framework as filters
 from rest_framework import generics, permissions, status, filters as drf_filters
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from .models import Category, Task
 from .serializers import CategorySerializer, TaskSerializer, ShareTaskSerializer
 from .permissions import IsOwner, IsTaskOwner

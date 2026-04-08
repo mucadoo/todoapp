@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import Count
 from rest_framework import views, permissions
 from rest_framework.response import Response
 from tasks.models import Task, Category
