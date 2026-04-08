@@ -8,7 +8,8 @@ from selenium.webdriver.support import expected_conditions as EC
 @pytest.mark.e2e
 def test_user_flow(driver, base_url):
     # Generate unique credentials
-    unique_id = str(uuid.uuid4())[:8]
+    # Project validation rules: lowercase letters and underscores only
+    unique_id = "".join(filter(str.isalpha, str(uuid.uuid4()))).lower()[:8]
     username = f"user_{unique_id}"
     email = f"user_{unique_id}@example.com"
     password = "password123"
