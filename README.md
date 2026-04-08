@@ -1,67 +1,67 @@
-# TodoApp — Full-Stack Python/React Application
+# TodoApp — Aplicação Full-Stack Python/React
 
-A production-quality To-Do List web application with advanced features like task sharing, categories, and public statistics.
+Uma aplicação web de lista de tarefas com qualidade de produção, apresentando recursos avançados como compartilhamento de tarefas, categorias e estatísticas públicas.
 
-## 1. Architecture Overview
+## 1. Visão Geral da Arquitetura
 
 ```mermaid
 graph LR
-    User[User/Browser] <--> Frontend[React 18 / Vite]
+    User[Usuário/Navegador] <--> Frontend[React 18 / Vite]
     Frontend <--> Backend[Django 5 / DRF]
     Backend <--> DB[(PostgreSQL 16)]
-    ThirdParty[Third-Party Integration] --> Backend
+    ThirdParty[Integração de Terceiros] --> Backend
 ```
 
-- **Backend**: Python 3.12, Django 5, Django REST Framework, SimpleJWT (Auth), PostgreSQL, drf-spectacular (OpenAPI).
-- **Frontend**: React 18, TypeScript, Axios, React Query, Tailwind CSS, Lucide Icons, React Hook Form, i18next (Internationalization).
-- **Testing**: Pytest (Backend), Selenium + Pytest (Frontend E2E).
-- **Infrastructure**: Docker, Docker Compose, GitHub Actions (CI/CD).
+- **Backend**: Python 3.12, Django 5, Django REST Framework, SimpleJWT (Autenticação), PostgreSQL, drf-spectacular (OpenAPI).
+- **Frontend**: React 18, TypeScript, Axios, React Query, Tailwind CSS, Lucide Icons, React Hook Form, i18next (Internacionalização).
+- **Testes**: Pytest (Backend), Selenium + Pytest (Frontend E2E).
+- **Infraestrutura**: Docker, Docker Compose, GitHub Actions (CI/CD).
 
-## 2. Features
+## 2. Funcionalidades
 
-- **Authentication**: JWT-based secure login and registration.
-- **Task Management**: Create, update, delete, and toggle tasks.
-- **Categories**: Organize tasks with custom categories.
-- **Task Sharing**: Share tasks with other users in the system.
-- **User Profile**: Update profile information, change username, and password.
-- **Search**: Search for other users to share tasks.
-- **Internationalization (i18n)**: Support for English and Portuguese.
-- **Theme Support**: Dark and Light mode options.
-- **API Documentation**: Interactive Swagger UI and ReDoc.
-- **Responsive Design**: Built with Tailwind CSS for mobile and desktop.
+- **Autenticação**: Login e registro seguros baseados em JWT.
+- **Gerenciamento de Tarefas**: Criar, atualizar, excluir e alternar status das tarefas.
+- **Categorias**: Organize tarefas com categorias personalizadas.
+- **Compartilhamento de Tarefas**: Compartilhe tarefas com outros usuários do sistema.
+- **Perfil do Usuário**: Atualize informações de perfil, mude o nome de usuário e a senha.
+- **Busca**: Pesquise outros usuários para compartilhar tarefas.
+- **Internacionalização (i18n)**: Suporte para Inglês e Português.
+- **Suporte a Temas**: Opções de modo claro e escuro.
+- **Documentação da API**: Swagger UI e ReDoc interativos.
+- **Design Responsivo**: Construído com Tailwind CSS para dispositivos móveis e desktop.
 
-## 3. Prerequisites
+## 3. Pré-requisitos
 
-- Docker and Docker Compose
-- Node.js 18+ (for local development)
-- Python 3.12 (for local development)
+- Docker e Docker Compose
+- Node.js 18+ (para desenvolvimento local)
+- Python 3.12 (para desenvolvimento local)
 
-## 4. How to Run Locally
+## 4. Como Executar Localmente
 
-### Using Docker (Recommended)
+### Usando Docker (Recomendado)
 
-1. Clone the repository.
-2. Create a `.env` file in the root directory (refer to `.env.example`).
-3. Run the following command:
+1. Clone o repositório.
+2. Crie um arquivo `.env` na raiz do diretório (consulte `.env.example`).
+3. Execute o seguinte comando:
    ```bash
    docker-compose up --build
    ```
-4. (Optional) Seed the database with initial data:
+4. (Opcional) Semeie o banco de dados com dados iniciais:
    ```bash
    docker-compose run --rm backend python manage.py seed_db
    ```
-   *Alternatively, you can start the app with seeding enabled by setting an environment variable:*
+   *Alternativamente, você pode iniciar o app com a semeadura habilitada definindo uma variável de ambiente:*
    ```bash
    SEED_DB=true docker-compose up --build
    ```
-5. Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8000`.
+5. Acesse o frontend em `http://localhost:3000` e o backend em `http://localhost:8000`.
    - **Swagger UI**: `http://localhost:8000/api/docs/swagger-ui/`
    - **ReDoc**: `http://localhost:8000/api/docs/redoc/`
-   *If you seeded the database, you can log in with:*
-   - **Email**: `dev@example.com`
-   - **Password**: `password123`
+   *Se você semeou o banco de dados, pode fazer login com:*
+   - **E-mail**: `dev@example.com`
+   - **Senha**: `password123`
 
-### Local Development (without Docker)
+### Desenvolvimento Local (sem Docker)
 
 **Backend:**
 ```bash
@@ -80,39 +80,39 @@ npm install
 npm run dev
 ```
 
-## 5. How to Run Tests
+## 5. Como Executar os Testes
 
-### Backend Tests
+### Testes de Backend
 ```bash
 cd backend
 pytest --cov=apps
 ```
 
-### Frontend E2E Tests
+### Testes de Frontend E2E
 ```bash
 cd frontend/tests
 pytest test_e2e.py
 ```
 
-## 6. API Documentation
+## 6. Documentação da API
 
-The project uses `drf-spectacular` to generate OpenAPI 3.0 schemas. When the backend is running, you can access the interactive documentation at:
+O projeto utiliza `drf-spectacular` para gerar esquemas OpenAPI 3.0. Com o backend em execução, você pode acessar a documentação interativa em:
 
 - **Swagger UI**: [http://localhost:8000/api/docs/swagger-ui/](http://localhost:8000/api/docs/swagger-ui/)
 - **ReDoc**: [http://localhost:8000/api/docs/redoc/](http://localhost:8000/api/docs/redoc/)
-- **Schema (YAML)**: [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/)
+- **Esquema (YAML)**: [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/)
 
-## 7. External API Documentation
+## 7. Documentação da API Externa
 
 **Endpoint:** `GET /api/external/stats/`
-Returns global aggregate statistics. No authentication required.
+Retorna estatísticas agregadas globais. Nenhuma autenticação é necessária.
 
-**Example Request:**
+**Exemplo de Requisição:**
 ```bash
 curl http://localhost:8000/api/external/stats/
 ```
 
-**Example Response:**
+**Exemplo de Resposta:**
 ```json
 {
   "total_tasks": 100,
@@ -125,7 +125,7 @@ curl http://localhost:8000/api/external/stats/
 }
 ```
 
-## 8. Environment Variables (`.env.example`)
+## 8. Variáveis de Ambiente (`.env.example`)
 
 ```env
 SECRET_KEY=your-secret-key
@@ -135,50 +135,50 @@ ALLOWED_HOSTS=localhost,127.0.0.1,backend
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-## 9. CI/CD Pipeline
+## 9. Pipeline CI/CD
 
-The GitHub Actions pipeline (`.github/workflows/ci.yml`) triggers on every push and PR to the `main` branch:
+O pipeline do GitHub Actions (`.github/workflows/ci.yml`) é acionado em cada push e PR para a branch `main`:
 
-1. **Linting**: Checks Python (ruff/black) and React (eslint/prettier) code style.
-2. **Backend Tests**: Runs pytest with coverage (must be > 80%).
-3. **Frontend Tests**: Executes Selenium E2E tests in a Docker Compose environment.
-4. **Build & Push**: Builds Docker images and pushes to GHCR (only on `push` to `main`).
-5. **Deploy**: Automatically deploys the latest version to AWS EC2 on push to `main`.
+1. **Linting**: Verifica o estilo de código Python (ruff/black) e React (eslint/prettier).
+2. **Testes de Backend**: Executa pytest com cobertura (deve ser > 80%).
+3. **Testes de Frontend**: Executa testes Selenium E2E em um ambiente Docker Compose.
+4. **Build & Push**: Constrói imagens Docker e as envia para o GHCR (somente em `push` para `main`).
+5. **Deploy**: Implanta automaticamente a versão mais recente no AWS EC2 ao realizar o push para `main`.
 
-## 10. Deploy (AWS EC2)
+## 10. Implantação (AWS EC2)
 
-### Prerequisites
-- AWS EC2 instance (t2.micro is sufficient) running Ubuntu/Amazon Linux.
-- Security Group rules: Allow SSH (22), HTTP (80), and HTTPS (443).
-- Docker and Docker Compose (V2) installed on the server.
-- The server must be logged in to GHCR to pull private images (if applicable):
+### Pré-requisitos
+- Instância AWS EC2 (t2.micro é suficiente) executando Ubuntu/Amazon Linux.
+- Regras do Grupo de Segurança: Permitir SSH (22), HTTP (80) e HTTPS (443).
+- Docker e Docker Compose (V2) instalados no servidor.
+- O servidor deve estar logado no GHCR para baixar imagens privadas (se aplicável):
   ```bash
-  echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+  echo <SEU_TOKEN_GITHUB> | docker login ghcr.io -u <SEU_USUARIO_GITHUB> --password-stdin
   ```
 
-### GitHub Secrets to Configure
-Set these secrets in your GitHub repository (Settings > Secrets and variables > Actions):
-- `EC2_HOST`: The public IP or DNS of your EC2 instance.
-- `EC2_USER`: The SSH username (e.g., `ubuntu` or `ec2-user`).
-- `EC2_SSH_KEY`: The content of your private SSH key (`.pem` file).
-- `POSTGRES_PASSWORD`: Production password for the database.
-- `SECRET_KEY`: Production Django secret key.
+### Segredos do GitHub para Configurar
+Defina estes segredos no seu repositório GitHub (Configurações > Segredos e variáveis > Actions):
+- `EC2_HOST`: O IP público ou DNS da sua instância EC2.
+- `EC2_USER`: O nome de usuário SSH (ex: `ubuntu` ou `ec2-user`).
+- `EC2_SSH_KEY`: O conteúdo da sua chave SSH privada (arquivo `.pem`).
+- `POSTGRES_PASSWORD`: Senha de produção para o banco de dados.
+- `SECRET_KEY`: Chave secreta de produção do Django.
 
-### One-time Server Setup
+### Configuração Única do Servidor
 ```bash
-# Update and install Docker
+# Atualizar e instalar Docker
 sudo apt-get update
 sudo apt-get install ca-certificates cursor-utils curl gnupg
-# ... follow official docker installation steps for your distro ...
-# Add your user to the docker group to run without sudo
+# ... siga os passos oficiais de instalação do Docker para sua distribuição ...
+# Adicione seu usuário ao grupo docker para executar sem sudo
 sudo usermod -aG docker $USER && newgrp docker
 ```
 
-## 11. Design Decisions
+## 11. Decisões de Design
 
-- **JWT Auth**: Used for stateless authentication, with `SimpleJWT` providing access and refresh token logic.
-- **UUID PKs**: Used for all models (User, Category, Task) for security and better scalability in distributed systems.
-- **React Query**: Chosen for powerful server state management, caching, and optimistic updates for toggling task completion.
-- **Internationalization (i18n)**: Implemented using `i18next` and `react-i18next` with browser language detection.
-- **Page Object Model (POM)**: Applied in Selenium tests for better maintainability and readability.
-- **Multi-stage Docker Builds**: Optimized for performance and security in production images.
+- **Autenticação JWT**: Utilizada para autenticação sem estado, com `SimpleJWT` fornecendo a lógica de tokens de acesso e renovação.
+- **UUID PKs**: Utilizados em todos os modelos (Usuário, Categoria, Tarefa) para segurança e melhor escalabilidade em sistemas distribuídos.
+- **React Query**: Escolhido para um gerenciamento poderoso do estado do servidor, cache e atualizações otimistas para alternar a conclusão de tarefas.
+- **Internacionalização (i18n)**: Implementada usando `i18next` e `react-i18next` com detecção de idioma do navegador.
+- **Page Object Model (POM)**: Aplicado nos testes Selenium para melhor manutenção e legibilidade.
+- **Docker de Múltiplos Estágios (Multi-stage Builds)**: Otimizado para desempenho e segurança em imagens de produção.
