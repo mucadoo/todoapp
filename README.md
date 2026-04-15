@@ -24,9 +24,9 @@
 
 ## 1. Visão Geral
 
-TodoApp é uma aplicação de lista de tarefas com qualidade de produção, construída com Django REST Framework no backend e React 18 no frontend. O projeto atende a todos os requisitos do teste prático da Bravi, incluindo o ponto extra de deploy em nuvem (AWS EC2).
+TodoApp é uma aplicação de lista de tarefas robusta e moderna, construída com Django REST Framework no backend e React 18 no frontend. O projeto demonstra boas práticas de desenvolvimento, incluindo testes automatizados, conteinerização e integração contínua com deploy em nuvem (AWS EC2).
 
-Credenciais de acesso pré-cadastradas para avaliação:
+Credenciais de acesso padrão (semeadas automaticamente):
 
 | Usuário | E-mail | Senha |
 |---|---|---|
@@ -158,8 +158,6 @@ Para gerar um `SECRET_KEY` seguro:
 python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
-> ⚠️ Nunca suba o arquivo `.env` com credenciais reais para o repositório. O `.gitignore` já o exclui por padrão.
-
 ---
 
 ## 7. Testes
@@ -187,7 +185,7 @@ docker exec todoapp_backend pytest /app/frontend_tests/test_e2e.py
 pip install selenium webdriver-manager pytest pytest-django
 
 # Opcional: aponte para um navegador específico
-export CHROME_BINARY_PATH="/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+export CHROME_BINARY_PATH="/path/to/your/browser.exe"
 
 # Opcional: desative headless para ver o navegador na tela
 export CHROME_HEADLESS=false
@@ -205,9 +203,9 @@ Os testes E2E seguem o padrão **Page Object Model (POM)** para melhor manutenç
 
 | Interface | URL (local) |
 |---|---|
-| Swagger UI | http://localhost:8000/api/docs/swagger-ui/ |
-| ReDoc | http://localhost:8000/api/docs/redoc/ |
-| Schema YAML | http://localhost:8000/api/schema/ |
+| Swagger UI | /api/docs/swagger-ui/ |
+| ReDoc | /api/docs/redoc/ |
+| Schema YAML | /api/schema/ |
 
 ### Endpoint público — estatísticas globais
 
@@ -284,7 +282,7 @@ A aplicação está em produção em: **http://18.117.222.176**
 
 ### Infraestrutura
 
-- **EC2 t2.micro** — Ubuntu, região us-east-1
+- **EC2 t2.micro** — Ubuntu, região us-east-2
 - **Nginx** — proxy reverso + serving de assets estáticos na porta 80
 - **Docker Compose** — orquestração de todos os serviços no servidor
 - **GHCR** — imagens Docker armazenadas no GitHub Container Registry
@@ -302,15 +300,6 @@ Configure em *Settings → Secrets and variables → Actions*:
 | `SECRET_KEY` | Chave secreta de produção do Django |
 | `AWS_ACCESS_KEY_ID` | Credencial AWS (se usar CLI/CloudFormation) |
 | `AWS_SECRET_ACCESS_KEY` | Credencial AWS (se usar CLI/CloudFormation) |
-
-### Setup inicial da instância (uma vez)
-
-```bash
-# Na instância EC2
-sudo apt update && sudo apt install -y docker.io docker-compose-plugin
-sudo usermod -aG docker ubuntu
-# Faça logout e login novamente para aplicar o grupo
-```
 
 ---
 
@@ -333,7 +322,3 @@ sudo usermod -aG docker ubuntu
 **Split settings (base / dev / prod)** — configurações de ambiente separadas evitam que valores de desenvolvimento vaze para produção acidentalmente.
 
 **i18n com i18next** — detecção automática do idioma do navegador com fallback para português, sem necessidade de configuração manual pelo usuário.
-
----
-
-*Desenvolvido como teste prático para a vaga de Desenvolvedor Python na Bravi.*
