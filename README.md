@@ -1,115 +1,115 @@
 # TodoApp
 
-> Aplicação web full-stack de gerenciamento de tarefas com autenticação JWT, compartilhamento entre usuários, categorias, API pública e deploy automatizado na AWS.
+> Full-stack task management web application with JWT authentication, user sharing, categories, public API, and automated deployment on AWS.
 
 ---
 
-## Índice
+## Index
 
-1. [Visão Geral](#1-visão-geral)
-2. [Funcionalidades](#2-funcionalidades)
-3. [Arquitetura](#3-arquitetura)
+1. [Overview](#1-overview)
+2. [Features](#2-features)
+3. [Architecture](#3-architecture)
 4. [Stack](#4-stack)
-5. [Rodando Localmente](#5-rodando-localmente)
-6. [Variáveis de Ambiente](#6-variáveis-de-ambiente)
-7. [Testes](#7-testes)
+5. [Running Locally](#5-running-locally)
+6. [Environment Variables](#6-environment-variables)
+7. [Testing](#7-testing)
 8. [API](#8-api)
 9. [CI/CD](#9-cicd)
-10. [Deploy AWS EC2](#10-deploy-aws-ec2)
-11. [Decisões de Design](#11-decisões-de-design)
+10. [AWS EC2 Deployment](#10-aws-ec2-deployment)
+11. [Design Decisions](#11-design-decisions)
 
 ---
 
-## 1. Visão Geral
+## 1. Overview
 
-TodoApp é uma aplicação de lista de tarefas robusta e moderna, construída com Django REST Framework no backend e React 18 no frontend. O projeto demonstra boas práticas de desenvolvimento, incluindo testes automatizados, conteinerização e integração contínua com deploy em nuvem (AWS EC2).
+TodoApp is a robust and modern task list application built with Django REST Framework on the backend and React 18 on the frontend. The project demonstrates development best practices, including automated testing, containerization, and continuous integration with cloud deployment (AWS EC2).
 
-Credenciais de acesso padrão (semeadas automaticamente):
+Default access credentials (automatically seeded):
 
-| Usuário | E-mail | Senha |
+| User | E-mail | Password |
 |---|---|---|
-| Desenvolvedor | dev@example.com | password123 |
+| Developer | dev@example.com | password123 |
 | Tester | tester@example.com | password123 |
-| Gerente | manager@example.com | password123 |
+| Manager | manager@example.com | password123 |
 
 ---
 
-## 2. Funcionalidades
+## 2. Features
 
-- **Autenticação** — registro, login e refresh via JWT (access + refresh tokens)
-- **Tarefas** — CRUD completo com infinite scroll, toggle de conclusão e atualização otimista
-- **Categorias** — criação e gerenciamento de categorias por usuário
-- **Compartilhamento** — compartilhe tarefas com outros usuários por e-mail
-- **Filtros** — por status, prioridade, categoria, intervalo de datas e busca por texto
-- **Perfil** — atualização de nome, e-mail e senha
-- **API Pública** — endpoint de estatísticas globais sem autenticação (`/api/external/stats/`)
-- **Documentação da API** — Swagger UI e ReDoc gerados automaticamente via drf-spectacular
-- **Internacionalização** — suporte a Português e Inglês com detecção automática pelo navegador
-- **Temas** — modo claro e escuro
-- **Design responsivo** — mobile e desktop via Tailwind CSS
+- **Authentication** — registration, login, and refresh via JWT (access + refresh tokens)
+- **Tasks** — full CRUD with infinite scroll, completion toggle, and optimistic updates
+- **Categories** — creation and management of categories per user
+- **Sharing** — share tasks with other users via email
+- **Filters** — by status, priority, category, date range, and text search
+- **Profile** — update name, email, and password
+- **Public API** — global statistics endpoint without authentication (`/api/external/stats/`)
+- **API Documentation** — Swagger UI and ReDoc automatically generated via drf-spectacular
+- **Internationalization** — support for Portuguese and English with automatic browser detection
+- **Themes** — light and dark mode
+- **Responsive Design** — mobile and desktop via Tailwind CSS
 
 ---
 
-## 3. Arquitetura
+## 3. Architecture
 
 ```mermaid
 graph LR
-    User[Usuário / Navegador] <--> Nginx[Nginx :80]
+    User[User / Browser] <--> Nginx[Nginx :80]
     Nginx -- /api/* --> Backend[Django 5 + Gunicorn]
-    Nginx -- /* --> Frontend[React 18 + Vite - Assets Estáticos]
+    Nginx -- /* --> Frontend[React 18 + Vite - Static Assets]
     Backend <--> DB[(PostgreSQL 16)]
-    External[Cliente Externo] -- GET /api/external/stats/ --> Backend
+    External[External Client] -- GET /api/external/stats/ --> Backend
 ```
 
-O Nginx atua como ponto de entrada único na porta 80, roteando:
-- requisições `/api/*` para o backend Django via Gunicorn
-- todo o restante para os assets estáticos do React
+Nginx acts as the single entry point on port 80, routing:
+- `/api/*` requests to the Django backend via Gunicorn
+- everything else to React static assets
 
-Toda a orquestração é feita via Docker Compose em rede isolada.
+All orchestration is done via Docker Compose in an isolated network.
 
 ---
 
 ## 4. Stack
 
-| Camada | Tecnologias |
+| Layer | Technologies |
 |---|---|
 | Backend | Python 3.12, Django 5, Django REST Framework, SimpleJWT, drf-spectacular, PostgreSQL 16 |
 | Frontend | React 18, TypeScript, Vite, Axios, React Query, React Hook Form, Tailwind CSS, i18next |
-| Testes | pytest, pytest-django, pytest-cov, Selenium, webdriver-manager |
+| Testing | pytest, pytest-django, pytest-cov, Selenium, webdriver-manager |
 | Infra | Docker, Docker Compose, Nginx, Gunicorn, GitHub Actions, AWS EC2 |
 
 ---
 
-## 5. Rodando Localmente
+## 5. Running Locally
 
-### Pré-requisitos
+### Prerequisites
 
-- Docker e Docker Compose instalados
+- Docker and Docker Compose installed
 
-### Com Docker (recomendado)
+### With Docker (recommended)
 
 ```bash
-git clone https://github.com/[seu-usuario]/todoapp.git
+git clone https://github.com/[your-user]/todoapp.git
 cd todoapp
 docker-compose up --build
 ```
 
-O banco é migrado e semeado automaticamente na primeira execução. Nenhuma configuração manual de `.env` é necessária para o ambiente de desenvolvimento — o `docker-compose.yml` já inclui valores padrão seguros.
+The database is automatically migrated and seeded on the first run. No manual `.env` configuration is required for the development environment — `docker-compose.yml` already includes safe default values.
 
-| Serviço | URL |
+| Service | URL |
 |---|---|
 | Frontend | http://localhost:3000 |
 | Backend | http://localhost:8000 |
 | Swagger UI | http://localhost:8000/api/docs/swagger-ui/ |
 | ReDoc | http://localhost:8000/api/docs/redoc/ |
 
-Para popular o banco manualmente:
+To seed the database manually:
 
 ```bash
 docker-compose run --rm backend python manage.py seed_db
 ```
 
-### Sem Docker (desenvolvimento local)
+### Without Docker (local development)
 
 **Backend:**
 
@@ -118,7 +118,7 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env      # edite conforme necessário
+cp .env.example .env      # edit as needed
 python manage.py migrate
 python manage.py runserver
 ```
@@ -133,9 +133,9 @@ npm run dev
 
 ---
 
-## 6. Variáveis de Ambiente
+## 6. Environment Variables
 
-Copie `.env.example` para `.env` e ajuste os valores para desenvolvimento local sem Docker:
+Copy `.env.example` to `.env` and adjust the values for local development without Docker:
 
 ```env
 # Django
@@ -143,14 +143,14 @@ SECRET_KEY=your-very-long-random-secret-key
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1,backend
 
-# Banco de dados
+# Database
 DATABASE_URL=postgres://todo_user:todo_password@db:5432/todoapp
 
 # CORS
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-Para gerar um `SECRET_KEY` seguro:
+To generate a secure `SECRET_KEY`:
 
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(50))"
@@ -158,7 +158,7 @@ python -c "import secrets; print(secrets.token_urlsafe(50))"
 
 ---
 
-## 7. Testes
+## 7. Testing
 
 ### Backend (pytest)
 
@@ -167,37 +167,37 @@ cd backend
 pytest --cov=apps
 ```
 
-A cobertura mínima exigida no CI é **80%**.
+Minimum coverage required in CI is **80%**.
 
 ### Frontend E2E (Selenium)
 
-**A. Dentro do Docker (headless — mesmo ambiente do CI):**
+**A. Inside Docker (headless — same as CI environment):**
 
 ```bash
 docker exec todoapp_backend pytest /app/frontend_tests/test_e2e.py
 ```
 
-**B. Com navegador local (WSL / Desktop):**
+**B. With local browser (WSL / Desktop):**
 
 ```bash
 pip install selenium webdriver-manager pytest pytest-django
 
-# Opcional: aponte para um navegador específico
+# Optional: point to a specific browser
 export CHROME_BINARY_PATH="/path/to/your/browser.exe"
 
-# Opcional: desative headless para ver o navegador na tela
+# Optional: disable headless to see the browser on screen
 export CHROME_HEADLESS=false
 
 pytest frontend/tests/test_e2e.py -m e2e
 ```
 
-Os testes E2E seguem o padrão **Page Object Model (POM)** para melhor manutenção e legibilidade.
+E2E tests follow the **Page Object Model (POM)** pattern for better maintenance and readability.
 
 ---
 
 ## 8. API
 
-### Documentação interativa
+### Interactive Documentation
 
 | Interface | URL (local) |
 |---|---|
@@ -205,95 +205,95 @@ Os testes E2E seguem o padrão **Page Object Model (POM)** para melhor manutenç
 | ReDoc | /api/docs/redoc/ |
 | Schema YAML | /api/schema/ |
 
-### Endpoint público — estatísticas globais
+### Public Endpoint — Global Statistics
 
-Não requer autenticação. Ideal para integração com sistemas externos.
+No authentication required. Ideal for integration with external systems.
 
 ```
 GET /api/external/stats/
 ```
 
-### Referência de endpoints
+### Endpoint Reference
 
-| Método | Endpoint | Auth | Descrição |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| POST | /api/auth/register/ | Não | Criar conta |
-| POST | /api/auth/login/ | Não | Login — retorna access + refresh JWT |
-| POST | /api/auth/refresh/ | Não | Renovar access token |
-| GET | /api/auth/check-email/ | Não | Verificar disponibilidade de e-mail |
-| GET | /api/auth/check-username/ | Não | Verificar disponibilidade de username |
-| GET | /api/auth/me/ | Sim | Perfil do usuário autenticado |
-| PUT / PATCH | /api/auth/me/ | Sim | Atualizar e-mail, username e nome |
-| PUT / PATCH | /api/auth/me/password/ | Sim | Alterar senha |
-| PUT / PATCH | /api/auth/me/username/ | Sim | Alterar username |
-| GET | /api/auth/search/ | Sim | Buscar usuários por nome |
-| GET / POST | /api/tasks/ | Sim | Listar (paginado) e criar tarefas |
-| GET / PUT / PATCH / DELETE | /api/tasks/{id}/ | Sim | Detalhe, edição e exclusão |
-| POST | /api/tasks/{id}/toggle/ | Sim | Alternar conclusão da tarefa |
-| POST | /api/tasks/{id}/share/ | Sim | Compartilhar com outro usuário por e-mail |
-| DELETE | /api/tasks/{id}/share/ | Sim | Remover compartilhamento |
-| GET / POST | /api/categories/ | Sim | Listar e criar categorias |
-| GET / PUT / PATCH / DELETE | /api/categories/{id}/ | Sim | Detalhe, edição e exclusão de categoria |
-| GET | /api/external/stats/ | Não | Estatísticas globais públicas |
+| POST | /api/auth/register/ | No | Create account |
+| POST | /api/auth/login/ | No | Login — returns access + refresh JWT |
+| POST | /api/auth/refresh/ | No | Renew access token |
+| GET | /api/auth/check-email/ | No | Check email availability |
+| GET | /api/auth/check-username/ | No | Check username availability |
+| GET | /api/auth/me/ | Yes | Authenticated user profile |
+| PUT / PATCH | /api/auth/me/ | Yes | Update email, username, and name |
+| PUT / PATCH | /api/auth/me/password/ | Yes | Change password |
+| PUT / PATCH | /api/auth/me/username/ | Yes | Change username |
+| GET | /api/auth/search/ | Yes | Search users by name |
+| GET / POST | /api/tasks/ | Yes | List (paginated) and create tasks |
+| GET / PUT / PATCH / DELETE | /api/tasks/{id}/ | Yes | Detail, edit, and delete |
+| POST | /api/tasks/{id}/toggle/ | Yes | Toggle task completion |
+| POST | /api/tasks/{id}/share/ | Yes | Share with another user by email |
+| DELETE | /api/tasks/{id}/share/ | Yes | Remove sharing |
+| GET / POST | /api/categories/ | Yes | List and create categories |
+| GET / PUT / PATCH / DELETE | /api/categories/{id}/ | Yes | Category detail, edit, and deletion |
+| GET | /api/external/stats/ | No | Public global statistics |
 
 ---
 
 ## 9. CI/CD
 
-O projeto utiliza GitHub Actions para automação:
+The project uses GitHub Actions for automation:
 
-1.  **CI (`ci.yml`)**: Disparado em todo push e PR para `main`.
-    - Executa linting (ruff, black, eslint).
-    - Executa testes de backend (pytest) e E2E (Selenium).
-    - Constrói as imagens Docker e as envia para o **GitHub Container Registry (GHCR)**.
+1.  **CI (`ci.yml`)**: Triggered on every push and PR to `main`.
+    - Runs linting (ruff, black, eslint).
+    - Runs backend tests (pytest) and E2E (Selenium).
+    - Builds Docker images and pushes them to the **GitHub Container Registry (GHCR)**.
 
-2.  **CD (`deploy.yml`)**: Disparado **manualmente** via "Workflow Dispatch".
-    - Provisiona/atualiza a infraestrutura via AWS CloudFormation.
-    - Realiza o deploy via SSH na instância EC2, atualizando os containers com as imagens mais recentes.
+2.  **CD (`deploy.yml`)**: Triggered **manually** via "Workflow Dispatch".
+    - Provisions/updates infrastructure via AWS CloudFormation.
+    - Performs deployment via SSH on the EC2 instance, updating containers with the latest images.
 
 ---
 
-## 10. Deploy AWS EC2
+## 10. AWS EC2 Deployment
 
-### Infraestrutura
+### Infrastructure
 
-- **EC2 t2.micro** — Ubuntu, região us-east-2
-- **Nginx** — proxy reverso + serving de assets estáticos na porta 80
-- **Docker Compose** — orquestração de todos os serviços no servidor
-- **GHCR** — imagens Docker armazenadas no GitHub Container Registry
+- **EC2 t2.micro** — Ubuntu, region us-east-2
+- **Nginx** — reverse proxy + static asset serving on port 80
+- **Docker Compose** — orchestration of all services on the server
+- **GHCR** — Docker images stored in GitHub Container Registry
 
-### Segredos necessários no GitHub
+### Required GitHub Secrets
 
-Configure em *Settings → Secrets and variables → Actions*:
+Configure in *Settings → Secrets and variables → Actions*:
 
-| Secret | Descrição |
+| Secret | Description |
 |---|---|
-| `EC2_USER` | Usuário SSH (ex: `ubuntu`) |
-| `EC2_SSH_KEY` | Conteúdo da chave SSH privada (.pem) |
-| `POSTGRES_PASSWORD` | Senha de produção do banco de dados |
-| `SECRET_KEY` | Chave secreta de produção do Django |
-| `AWS_ACCESS_KEY_ID` | Credencial AWS |
-| `AWS_SECRET_ACCESS_KEY` | Credencial AWS |
-| `EC2_KEY_NAME` | Nome da Key Pair na AWS |
+| `EC2_USER` | SSH User (e.g., `ubuntu`) |
+| `EC2_SSH_KEY` | Private SSH key content (.pem) |
+| `POSTGRES_PASSWORD` | Production database password |
+| `SECRET_KEY` | Production Django secret key |
+| `AWS_ACCESS_KEY_ID` | AWS Credentials |
+| `AWS_SECRET_ACCESS_KEY` | AWS Credentials |
+| `EC2_KEY_NAME` | AWS Key Pair name |
 
 ---
 
-## 11. Decisões de Design
+## 11. Design Decisions
 
-**UUID como chave primária** — todos os modelos (User, Task, Category) usam UUID em vez de inteiros sequenciais, evitando enumeração de recursos e facilitando escalabilidade em sistemas distribuídos.
+**UUID as primary key** — all models (User, Task, Category) use UUIDs instead of sequential integers, preventing resource enumeration and facilitating scalability in distributed systems.
 
-**JWT com SimpleJWT** — autenticação stateless com tokens de acesso de curta duração e refresh token de longa duração, eliminando a necessidade de sessões no servidor.
+**JWT with SimpleJWT** — stateless authentication with short-lived access tokens and long-lived refresh tokens, eliminating the need for server-side sessions.
 
-**Infinite scroll com `useInfiniteQuery`** — preferido à paginação por números de página para uma experiência de navegação mais fluida, especialmente em dispositivos móveis.
+**Infinite scroll with `useInfiniteQuery`** — preferred over page-number pagination for a smoother browsing experience, especially on mobile devices.
 
-**Nginx como ponto de entrada único** — unifica frontend e backend sob a mesma porta (80), elimina problemas de CORS em produção e serve assets estáticos com alta eficiência.
+**Nginx as single entry point** — unifies frontend and backend under the same port (80), eliminates CORS issues in production, and serves static assets with high efficiency.
 
-**React Query para estado do servidor** — gerenciamento de cache, refetch automático e atualizações otimistas (toggle de conclusão de tarefa acontece instantaneamente na UI antes da confirmação do servidor).
+**React Query for server state** — cache management, automatic refetch, and optimistic updates (task completion toggle happens instantly in the UI before server confirmation).
 
-**Multi-stage Docker builds** — imagens de produção significativamente menores e mais seguras, separando o ambiente de build do runtime.
+**Multi-stage Docker builds** — significantly smaller and more secure production images, separating the build environment from runtime.
 
-**Page Object Model nos testes Selenium** — seletores e ações encapsulados por página, tornando os testes legíveis e fáceis de manter quando a UI muda.
+**Page Object Model in Selenium tests** — selectors and actions encapsulated by page, making tests readable and easy to maintain when the UI changes.
 
-**Split settings (base / dev / prod)** — configurações de ambiente separadas evitam que valores de desenvolvimento vaze para produção acidentalmente.
+**Split settings (base / dev / prod)** — separate environment configurations prevent development values from accidentally leaking into production.
 
-**i18n com i18next** — detecção automática do idioma do navegador com fallback para português, sem necessidade de configuração manual pelo usuário.
+**i18n with i18next** — automatic browser language detection with fallback to Portuguese, no manual configuration required by the user.
