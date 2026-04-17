@@ -2,8 +2,6 @@
 
 > Aplicação web full-stack de gerenciamento de tarefas com autenticação JWT, compartilhamento entre usuários, categorias, API pública e deploy automatizado na AWS.
 
-**🌐 Produção:** http://18.117.222.176
-
 ---
 
 ## Índice
@@ -215,26 +213,6 @@ Não requer autenticação. Ideal para integração com sistemas externos.
 GET /api/external/stats/
 ```
 
-**Exemplo:**
-
-```bash
-curl http://18.117.222.176/api/external/stats/
-```
-
-**Resposta:**
-
-```json
-{
-  "total_tasks": 100,
-  "completed_tasks": 45,
-  "completion_rate": 45.0,
-  "top_categories": [
-    { "id": "uuid-1", "name": "Work", "task_count": 40 },
-    { "id": "uuid-2", "name": "Personal", "task_count": 30 }
-  ]
-}
-```
-
 ### Referência de endpoints
 
 | Método | Endpoint | Auth | Descrição |
@@ -262,23 +240,20 @@ curl http://18.117.222.176/api/external/stats/
 
 ## 9. CI/CD
 
-O pipeline no GitHub Actions (`.github/workflows/ci.yml`) é disparado em todo push e PR para `main`:
+O projeto utiliza GitHub Actions para automação:
 
-```
-push / PR → main
-    │
-    ├── lint         ruff + black (Python) · eslint + prettier (React)
-    ├── test-backend pytest com cobertura mínima de 80%
-    ├── test-e2e     Selenium headless via Docker Compose
-    ├── build        Docker multi-stage → push para GHCR
-    └── deploy       SSH → EC2 → docker compose pull + up (somente push em main)
-```
+1.  **CI (`ci.yml`)**: Disparado em todo push e PR para `main`.
+    - Executa linting (ruff, black, eslint).
+    - Executa testes de backend (pytest) e E2E (Selenium).
+    - Constrói as imagens Docker e as envia para o **GitHub Container Registry (GHCR)**.
+
+2.  **CD (`deploy.yml`)**: Disparado **manualmente** via "Workflow Dispatch".
+    - Provisiona/atualiza a infraestrutura via AWS CloudFormation.
+    - Realiza o deploy via SSH na instância EC2, atualizando os containers com as imagens mais recentes.
 
 ---
 
 ## 10. Deploy AWS EC2
-
-A aplicação está em produção em: **http://18.117.222.176**
 
 ### Infraestrutura
 
@@ -293,13 +268,13 @@ Configure em *Settings → Secrets and variables → Actions*:
 
 | Secret | Descrição |
 |---|---|
-| `EC2_HOST` | IP público da instância EC2 |
 | `EC2_USER` | Usuário SSH (ex: `ubuntu`) |
 | `EC2_SSH_KEY` | Conteúdo da chave SSH privada (.pem) |
 | `POSTGRES_PASSWORD` | Senha de produção do banco de dados |
 | `SECRET_KEY` | Chave secreta de produção do Django |
-| `AWS_ACCESS_KEY_ID` | Credencial AWS (se usar CLI/CloudFormation) |
-| `AWS_SECRET_ACCESS_KEY` | Credencial AWS (se usar CLI/CloudFormation) |
+| `AWS_ACCESS_KEY_ID` | Credencial AWS |
+| `AWS_SECRET_ACCESS_KEY` | Credencial AWS |
+| `EC2_KEY_NAME` | Nome da Key Pair na AWS |
 
 ---
 
